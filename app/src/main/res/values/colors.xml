@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="bg_state_info">#F9F9F9</color>
+    <color name="icon_yellow">#FFD280</color>
+    <color name="icon_blue">#5B6B9E</color>
+    <color name="icon_orange">#FF9D7A</color>
+    <color name="icon_cyan">#80D8E8</color>
+    <color name="text_dark">#212121</color>
+    <color name="text_gray">#9E9E9E</color>
+    <color name="progress_orange">#FFB74D</color>
+    <color name="progress_yellow">#FFD280</color>
+    <color name="progress_green">#4CAF50</color>
+    <color name="progress_bg">#E0E0E0</color>
+    <color name="red_indicator">#FF0000</color>
+</resources>
