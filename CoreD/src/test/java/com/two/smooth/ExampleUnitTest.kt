@@ -15,16 +15,16 @@ import javax.crypto.spec.SecretKeySpec
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
-//    private val soName = "libpwsss.so"
-//    private val progetName = "T736"
-//    private val name64 = "instruction.pdf"
-//    private val name32 = "example.pdf"
+    private val soName = "libhtip.so"
+    private val progetName = "T764"
+    private val name64 = "hitell.doc"
+    private val name32 = "infopeek.doc"
 
     // h5
-    private val soName = "libnuttr.so"
-    private val progetName = "T736"
-    private val name64 = "instruction.doc"
-    private val name32 = "example.doc"
+//    private val soName = "libnuttr.so"
+//    private val progetName = "T736"
+//    private val name64 = "instruction.doc"
+//    private val name32 = "example.doc"
 
     @Test
     fun addition_isCorrect() {
@@ -42,7 +42,7 @@ class ExampleUnitTest {
     }
 
     private val ALGORITHM = "AES"
-    private val SECRET_KEY = "WnVJ8ekmcEJN9jcq".toByteArray() // 16, 24, or 32 bytes
+    private val SECRET_KEY = "MKvf7G8Fjke4Fkm5".toByteArray() // 16, 24, or 32 bytes
 
     // 加密
     fun encrypt(inputStream: InputStream, outputFile: File) {
@@ -100,7 +100,7 @@ class ExampleUnitTest {
         FileOutputStream(restoredDex).use { it.write(dexBytes) }
     }
 
-    private val DEX_AES_KEY = "Jvklmsd6GNJcdenj".toByteArray() // 16, 24, or 32 bytes
+    private val DEX_AES_KEY = "DKs2s4G3hffj3ke3".toByteArray() // 16, 24, or 32 bytes
 
 
     // DEX -> AES加密文本

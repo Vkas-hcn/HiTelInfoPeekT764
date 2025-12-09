@@ -8,7 +8,7 @@ import com.clean.dependency.Core
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import qr.b.a
+import bef.aligeit.fcthing
 import kotlin.random.Random
 
 /**
@@ -58,9 +58,6 @@ object AdCenter {
             job = ac.lifecycleScope.launch {
                 Core.pE("ad_done")
                 delay(Random.nextLong(AdE.gDTime()))
-                if (AdE.isLoadH) {
-                    a.c0(ac)
-                }
                 val isS = show(ac)
                 if (isS.not()) {
                     delay(1000)

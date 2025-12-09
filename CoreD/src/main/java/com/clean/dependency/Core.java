@@ -55,7 +55,8 @@ public class Core {
                 canRetry = false;
                 break;
         }
-        b.B.b(mApp,canRetry,name, "string",value);
+        Log.e("TAG", "pE: "+name+"-----"+ value );
+//        b.B.b(mApp,canRetry,name, "string",value);
     }
 
     public static void pE(String string) {
@@ -63,10 +64,11 @@ public class Core {
     }
 
     public static void postAd(Context context,String string) {
-        a.A.a(context,string);
+//        a.A.a(context,string);
     }
     public static List<Activity> c0() {
-       return c.C.c0();
+//       return c.C.c0();
+        return null;
     }
 
     public static String getStr(String key) {

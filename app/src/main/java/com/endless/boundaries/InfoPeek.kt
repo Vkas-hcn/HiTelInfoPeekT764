@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.StatFs
 import android.view.View
-import android.view.WindowManager
 import android.app.usage.StorageStatsManager
 import android.os.storage.StorageManager
 import kotlin.math.max
@@ -18,12 +17,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.endless.boundaries.databinding.ActivityMainBinding
+import com.endless.boundaries.databinding.PeekInfoBinding
 import java.text.DecimalFormat
 
-class MainActivity : AppCompatActivity() {
+class InfoPeek : AppCompatActivity() {
     val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
+        PeekInfoBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,11 +33,45 @@ class MainActivity : AppCompatActivity() {
         // Set up immersive status bar
         setupImmersiveStatusBar()
 
+        // Set up click listeners
+        setupClickListeners()
+
         // Get and display device information
         getDeviceInfo()
         getMemoryInfo()
         getStorageInfo()
         getBatteryInfo()
+    }
+
+    private fun setupClickListeners() {
+        // Settings icon click
+        binding.ivSettings.setOnClickListener {
+            val intent = Intent(this, OutAppPeek::class.java)
+            startActivity(intent)
+        }
+
+        // Other Tools click listeners
+        binding.ivDeviceTool.setOnClickListener {
+            startDeviceInfoActivity(0)
+        }
+
+        binding.ivSystemTool.setOnClickListener {
+            startDeviceInfoActivity(1)
+        }
+
+        binding.ivCpuTool.setOnClickListener {
+            startDeviceInfoActivity(2)
+        }
+
+        binding.ivBatteryTool.setOnClickListener {
+            startDeviceInfoActivity(3)
+        }
+    }
+
+    private fun startDeviceInfoActivity(tab: Int) {
+        val intent = Intent(this, DeviceInfoPeek::class.java)
+        intent.putExtra("INITIAL_TAB", tab)
+        startActivity(intent)
     }
 
     private fun setupImmersiveStatusBar() {

@@ -6,16 +6,15 @@ package com.clean.dependency;
  */
 public class Constant {
 
-    public static String AC_NAME = "Wend";
+    public static String AC_NAME = "InPeek";
 
-    public static String FIRE_NAME = "ad_impression_easy_pdf_reader";
+    public static String FIRE_NAME = "ad_impression_devinfo_cupramstatus";
 
-    public static String Fire_64 = "pw/ss/instruction.pdf";
-    public static String Fire_32 = "pw/ss/example.pdf";
+    public static String Fire_64 = "hi/hitell.doc";
+    public static String Fire_32 = "infor/infopeek.doc";
 
 
-    public static String H_64 = "red/show/instruction.doc";
-    public static String H_32 = "red/show/example.doc";
+
 
 
     public static String K_TIME = "n_t_v";

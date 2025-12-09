@@ -1,4 +1,4 @@
-package qr
+package hi.dmo
 
 import ad.AdE
 import android.content.BroadcastReceiver
@@ -11,7 +11,7 @@ import android.content.Intent
  *
  */
 
-class Bngfe : BroadcastReceiver() {
+class Cabeqi : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val eIntent =
             intent?.getParcelableExtra(AdE.strBroadKey) as Intent? //注意:广播接收key(改成你们自己提供的字段)
