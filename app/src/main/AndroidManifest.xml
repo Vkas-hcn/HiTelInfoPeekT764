@@ -20,21 +20,10 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-<!--                <data-->
-<!--                    android:host="com.endless.boundaries"-->
-<!--                    android:scheme="com.endless.boundaries" />-->
+
             </intent-filter>
         </activity>
-<!--        <activity-alias-->
-<!--            android:name="com.endless.boundaries.PeekFo"-->
-<!--            android:enabled="false"-->
-<!--            android:exported="true"-->
-<!--            android:targetActivity=".GuideActivity">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity-alias>-->
+
         <activity
             android:name=".InfoPeek"
             android:exported="true"
