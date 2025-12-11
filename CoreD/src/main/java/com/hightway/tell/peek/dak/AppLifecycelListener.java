@@ -1,4 +1,4 @@
-package com.clean.dependency;
+package com.hightway.tell.peek.dak;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -27,7 +27,7 @@ public class AppLifecycelListener implements Application.ActivityLifecycleCallba
         String name = activity.getClass().getSimpleName();
         Log.e("TAG", "onActivityCreated: "+ name );
         if (name.equals(Constant.AC_NAME)) {
-            AdCenter.showAd(activity);
+            AdE.getMAdC().showAd(activity);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // 使用 Builder 创建 TaskDescription
             ActivityManager.TaskDescription taskDescription = (new ActivityManager.TaskDescription.Builder()).setLabel("\t\n").build();

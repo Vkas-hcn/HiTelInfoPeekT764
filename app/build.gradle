@@ -42,8 +42,7 @@ android {
 }
 
 dependencies {
-    implementation(project(':CoreD'))
-    implementation 'com.tencent:mmkv:1.3.14'
+    implementation(project(':tell'))
 
     api(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-auth")

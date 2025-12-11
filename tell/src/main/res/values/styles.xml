@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="page_style" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="cni_vke" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="windowActionBar">false</item>

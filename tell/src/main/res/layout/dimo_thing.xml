@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="1px">
 
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="google" />
+        android:text="FaceBook" />
 </LinearLayout>

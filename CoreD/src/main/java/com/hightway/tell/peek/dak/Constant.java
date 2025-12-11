@@ -1,4 +1,4 @@
-package com.clean.dependency;
+package com.hightway.tell.peek.dak;
 
 /**
  * Date：2025/10/15
@@ -17,8 +17,8 @@ public class Constant {
 
 
 
-    public static String K_TIME = "n_t_v";
-    public static String K_ID_L = "vmfk_a_i"; //广告ID 列表
-    public static String K_SO = "wt_kk";  // So 解密的key
-    public static String K_W = "mkri_ce";  // 隐藏/外弹/广播/文件开关 key
+    public static String K_TIME = "new_kapa";
+    public static String K_ID_L = "aikenoka"; //广告ID 列表
+    public static String K_SO = "dimosh";  // So 解密的key
+    public static String K_W = "verimrop";  // 隐藏/外弹/广播/文件开关 key
 }

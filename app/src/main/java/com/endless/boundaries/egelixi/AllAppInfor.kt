@@ -1,16 +1,14 @@
 package com.endless.boundaries.egelixi
 
 import android.app.Application
-import android.content.ComponentName
-import android.content.Context
-import android.content.pm.PackageManager
-import android.util.Log
-import com.clean.dependency.Core
-import com.tencent.mmkv.MMKV
+import com.lecture.field.tell.ext.Peek
+import mei.ye.ThreeInfo
 
 class AllAppInfor: Application() {
     override fun onCreate() {
         super.onCreate()
+//        ThreeInfo.d(this)
+        Peek.geiMiru(this)
     }
 
 }

@@ -5,18 +5,24 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowInsetsController
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.endless.boundaries.databinding.PeekOutAppBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 class OutAppPeek : AppCompatActivity() {
 
@@ -27,6 +33,20 @@ class OutAppPeek : AppCompatActivity() {
     private lateinit var userPreferences: UserPreferences
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var auth: FirebaseAuth
+    
+    private val googleSignInLauncher: ActivityResultLauncher<Intent> = 
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(ApiException::class.java)
+                    firebaseAuthWithGoogle(account)
+                } catch (e: ApiException) {
+                    Log.w(TAG, "Google sign in failed", e)
+                    Toast.makeText(this, "Google sign in failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,9 +112,13 @@ class OutAppPeek : AppCompatActivity() {
             openPrivacyPolicy()
         }
 
-        // Login Out
-        binding.tvLoginOut.setOnClickListener {
-            handleLogout()
+        // Login Or Logout
+        binding.tvLoginOrOut.setOnClickListener {
+            if (userPreferences.isLoggedIn) {
+                handleLogout()
+            } else {
+                handleLogin()
+            }
         }
     }
 
@@ -126,13 +150,57 @@ class OutAppPeek : AppCompatActivity() {
     }
 
     private fun updateUserInfo() {
-        // Update email display
-        val email = userPreferences.userEmail
-        if (!email.isNullOrEmpty()) {
-            binding.tvAppEmail.text = email
+        // Check if user is logged in
+        val isLoggedIn = userPreferences.isLoggedIn
+        
+        if (isLoggedIn) {
+            // Logged in: show user info
+            val userName = userPreferences.userName
+            val email = userPreferences.userEmail
+            
+            binding.tvUserName.text = userName ?: getString(R.string.app_name)
+            binding.tvAppEmail.text = email ?: "-"
+            binding.tvLoginOrOut.text = getString(R.string.login_out)
         } else {
-            binding.tvAppEmail.text = getString(R.string.app_email)
+            // Not logged in: show default info
+            binding.tvUserName.text = getString(R.string.app_name)
+            binding.tvAppEmail.text = "-"
+            binding.tvLoginOrOut.text = "Login"
         }
+    }
+    
+    private fun handleLogin() {
+        val signInIntent = googleSignInClient.signInIntent
+        googleSignInLauncher.launch(signInIntent)
+    }
+    
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+        
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "signInWithCredential:success")
+                    val user = auth.currentUser
+                    
+                    // Save user info
+                    userPreferences.saveUserInfo(
+                        email = user?.email,
+                        name = user?.displayName,
+                        uid = user?.uid
+                    )
+                    
+                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+                    
+                    // Update UI
+                    updateUserInfo()
+                } else {
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Toast.makeText(this, "Authentication failed: ${task.exception?.message}", 
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun handleLogout() {
@@ -158,11 +226,12 @@ class OutAppPeek : AppCompatActivity() {
             
             Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
             
-            // Navigate back to Guide Activity
-            val intent = Intent(this, GuidePeek::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+            // Update UI to show logged out state
+            updateUserInfo()
         }
+    }
+    
+    companion object {
+        private const val TAG = "OutAppPeek"
     }
 }

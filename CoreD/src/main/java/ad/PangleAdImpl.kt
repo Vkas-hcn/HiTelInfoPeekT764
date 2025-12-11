@@ -2,7 +2,6 @@ package ad
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import com.appsflyer.AFAdRevenueData
 import com.appsflyer.AdRevenueScheme
 import com.appsflyer.AppsFlyerLib
@@ -13,12 +12,12 @@ import com.bytedance.sdk.openadsdk.api.interstitial.PAGInterstitialAdLoadCallbac
 import com.bytedance.sdk.openadsdk.api.interstitial.PAGInterstitialRequest
 import com.bytedance.sdk.openadsdk.api.model.PAGAdEcpmInfo
 import com.bytedance.sdk.openadsdk.api.model.PAGErrorModel
-import com.clean.dependency.Core
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.hightway.tell.peek.Core
 import org.json.JSONObject
 import java.util.Currency
 
@@ -31,14 +30,11 @@ class PangleAdImpl(val t: String = "") {
     private var isL = false
     private var lT = 0L
     private var mAd: PAGInterstitialAd? = null
-    var loadTime = 0L
-    private var mId = ""
 
     fun lAd(id: String) {
         if (id.isBlank()) return
         if (isL && System.currentTimeMillis() - lT < 61000) return
         if (mAd != null) return
-        mId = id
         isL = true
         lT = System.currentTimeMillis()
         Core.pE("advertise_req$t")
@@ -58,8 +54,6 @@ class PangleAdImpl(val t: String = "") {
                     mAd = pagInterstitialAd
                     isL = false
                     Core.pE("advertise_get$t")
-                    loadTime = System.currentTimeMillis()
-                    AdE.adLoadSuccess()
                 }
             })
     }
@@ -93,7 +87,6 @@ class PangleAdImpl(val t: String = "") {
                         postValue(it)
                     }
                     AdE.adShow()
-                    AdE.checkAdIsReadyAndGoNext()
                 }
 
                 override fun onAdDismissed() {
@@ -110,9 +103,7 @@ class PangleAdImpl(val t: String = "") {
                         "${pagErrorModel.errorCode}_${pagErrorModel.errorMessage}"
                     )
                     AdE.isSAd = false
-                    lAd(mId)
-                    AdE.lastSAdTime = 0
-                    AdE.checkAdIsReadyAndGoNext()
+                    AdE.mAdC.loadAd()
                 }
             })
             ad.show(a)
@@ -125,13 +116,13 @@ class PangleAdImpl(val t: String = "") {
 
     private fun postValue(si: PAGAdEcpmInfo) {
         Core.postAd(Core.mApp,
-            JSONObject().put("est", si.cpm.toDouble() * 1000)//ad_pre_ecpm
-                .put("spree", "USD")//currency
-                .put("reason", si.adnName)//ad_network
-                .put("poe", "pangle")//ad_source_client
-                .put("belfast", si.placement)//ad_code_id
-                .put("ripe", si.adUnit)//ad_pos_id
-                .put("cheeky", si.adFormat)//ad_format
+            JSONObject().put("", si.cpm.toDouble() * 1000)//ad_pre_ecpm
+                .put("", "USD")//currency
+                .put("", si.adnName)//ad_network
+                .put("", "pangle")//ad_source_client
+                .put("", si.placement)//ad_code_id
+                .put("", si.adUnit)//ad_pos_id
+                .put("", si.adFormat)//ad_format
                 .toString()
         )
         val cpm = si.cpm.toDouble() / 1000

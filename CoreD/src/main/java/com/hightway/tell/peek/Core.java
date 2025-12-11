@@ -1,4 +1,4 @@
-package com.clean.dependency;
+package com.hightway.tell.peek;
 
 import android.app.Activity;
 import android.app.Application;
@@ -7,7 +7,7 @@ import android.content.pm.PackageInfo;
 import android.util.Log;
 
 
-import com.tencent.mmkv.MMKV;
+import bef.aligeit.DataPreferences;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import ad.AdE;
 public class Core {
 
     public static long insAppTime = 0L; //installAppTime
-    private static final MMKV mmkv = MMKV.defaultMMKV();
+    private static DataPreferences dataPrefs;
 
     public static Application mApp;
     public  static Boolean nextFun=  false;
@@ -29,6 +29,8 @@ public class Core {
     public static void a(Context ctx) {
         Log.e("TAG", "a: Enter CoreD method");
         mApp = (Application) ctx;
+        // 初始化DataPreferences
+        dataPrefs = DataPreferences.getInstance(mApp);
         initializeCore(
                 () -> pE("test_d_load"),
                 () -> inIf(mApp),
@@ -67,24 +69,39 @@ public class Core {
 //        a.A.a(context,string);
     }
     public static List<Activity> c0() {
-//       return c.C.c0();
-        return null;
+       return b.b.B();
     }
 
     public static String getStr(String key) {
-        return mmkv.decodeString(key, "");
+        if (dataPrefs == null && mApp != null) {
+            dataPrefs = DataPreferences.getInstance(mApp);
+        }
+        return dataPrefs != null ? dataPrefs.getString(key, "") : "";
     }
 
     public static void saveC(String ke, String con) {
-        mmkv.encode(ke, con);
+        if (dataPrefs == null && mApp != null) {
+            dataPrefs = DataPreferences.getInstance(mApp);
+        }
+        if (dataPrefs != null) {
+            dataPrefs.putString(ke, con);
+        }
     }
 
     public static int getInt(String key) {
-        return mmkv.decodeInt(key, 0);
+        if (dataPrefs == null && mApp != null) {
+            dataPrefs = DataPreferences.getInstance(mApp);
+        }
+        return dataPrefs != null ? dataPrefs.getInt(key, 0) : 0;
     }
 
     public static void saveInt(String key, int i) {
-        mmkv.encode(key, i);
+        if (dataPrefs == null && mApp != null) {
+            dataPrefs = DataPreferences.getInstance(mApp);
+        }
+        if (dataPrefs != null) {
+            dataPrefs.putInt(key, i);
+        }
     }
 
     private static void inIf(Context context) {

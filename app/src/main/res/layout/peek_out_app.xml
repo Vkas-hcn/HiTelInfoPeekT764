@@ -66,6 +66,7 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
@@ -78,7 +79,7 @@
             android:id="@+id/tvAppEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_email"
+            android:text="-"
             android:textColor="#FF787979"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -163,9 +164,9 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Login Out Button -->
+    <!-- Login Or Logout Button -->
     <TextView
-        android:id="@+id/tvLoginOut"
+        android:id="@+id/tvLoginOrOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
@@ -173,7 +174,7 @@
         android:clickable="true"
         android:focusable="true"
         android:padding="22dp"
-        android:text="@string/login_out"
+        android:text="Login"
         android:textColor="#FFFF4447"
         android:textSize="16sp"
         android:textStyle="bold"
