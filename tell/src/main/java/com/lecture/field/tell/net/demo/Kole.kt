@@ -113,7 +113,7 @@ object Kole {
                     val jsonData = JSONObject(parseAdminRefData(jsonResponse.toString()))
                     isCanSave(context,jsonData)
                     FirebaseShow.initFb(context as Application,jsonData)
-                    DuoFun.ConfigG(context, ConTool.canUser(context,jsonData.toString()),"200")
+                    DuoFun.ConfigG(context, ConTool.canUser(jsonData.toString()),"200")
                     cfFail(context)
                     callback.onSuccess(jsonData.toString())
                 } catch (e: Exception) {
@@ -139,8 +139,8 @@ object Kole {
 
         // 检查是否需要拒绝保存
         val shouldRejectSave = try {
-            val isCurrentDataValid = ConTool.canUser(context,currentSavedData)
-            val isNewDataValid = ConTool.canUser(context,newDataString)
+            val isCurrentDataValid = ConTool.canUser(currentSavedData)
+            val isNewDataValid = ConTool.canUser(newDataString)
             // 当前数据有效 且 新数据无效 -> 拒绝保存（保护有效数据不被覆盖）
             isCurrentDataValid && !isNewDataValid
         } catch (e: Exception) {

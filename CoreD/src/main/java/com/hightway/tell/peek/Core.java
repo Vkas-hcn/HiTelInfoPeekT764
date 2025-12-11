@@ -30,19 +30,13 @@ public class Core {
         Log.e("TAG", "a: Enter CoreD method");
         mApp = (Application) ctx;
         // 初始化DataPreferences
-        dataPrefs = DataPreferences.getInstance(mApp);
-        initializeCore(
-                () -> pE("test_d_load"),
-                () -> inIf(mApp),
-                AdE::a2
-        );
+        dataPrefs = DataPreferences.getInstance(ctx);
+        pE("test_d_load");
+        inIf(ctx);
+        AdE.a2();
     }
 
-    private static void initializeCore(Runnable... initializers) {
-        for (Runnable initializer : initializers) {
-            initializer.run();
-        }
-    }
+
 
     public static void pE(String name, String value) {
         boolean canRetry;

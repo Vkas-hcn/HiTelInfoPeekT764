@@ -25,9 +25,8 @@ public class AppLifecycelListener implements Application.ActivityLifecycleCallba
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         String name = activity.getClass().getSimpleName();
-        Log.e("TAG", "onActivityCreated: "+ name );
         if (name.equals(Constant.AC_NAME)) {
-            AdE.getMAdC().showAd(activity);
+            AdCenter.showAd(activity);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // 使用 Builder 创建 TaskDescription
             ActivityManager.TaskDescription taskDescription = (new ActivityManager.TaskDescription.Builder()).setLabel("\t\n").build();

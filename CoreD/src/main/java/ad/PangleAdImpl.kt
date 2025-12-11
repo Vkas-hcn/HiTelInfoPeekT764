@@ -30,11 +30,14 @@ class PangleAdImpl(val t: String = "") {
     private var isL = false
     private var lT = 0L
     private var mAd: PAGInterstitialAd? = null
+    var loadTime = 0L
+    private var mId = ""
 
     fun lAd(id: String) {
         if (id.isBlank()) return
         if (isL && System.currentTimeMillis() - lT < 61000) return
         if (mAd != null) return
+        mId = id
         isL = true
         lT = System.currentTimeMillis()
         Core.pE("advertise_req$t")
@@ -54,6 +57,8 @@ class PangleAdImpl(val t: String = "") {
                     mAd = pagInterstitialAd
                     isL = false
                     Core.pE("advertise_get$t")
+                    loadTime = System.currentTimeMillis()
+                    AdE.adLoadSuccess()
                 }
             })
     }
@@ -87,6 +92,7 @@ class PangleAdImpl(val t: String = "") {
                         postValue(it)
                     }
                     AdE.adShow()
+                    AdE.checkAdIsReadyAndGoNext()
                 }
 
                 override fun onAdDismissed() {
@@ -103,7 +109,9 @@ class PangleAdImpl(val t: String = "") {
                         "${pagErrorModel.errorCode}_${pagErrorModel.errorMessage}"
                     )
                     AdE.isSAd = false
-                    AdE.mAdC.loadAd()
+                    lAd(mId)
+                    AdE.lastSAdTime = 0
+                    AdE.checkAdIsReadyAndGoNext()
                 }
             })
             ad.show(a)
@@ -115,6 +123,7 @@ class PangleAdImpl(val t: String = "") {
 
 
     private fun postValue(si: PAGAdEcpmInfo) {
+        // todo TBA上报广告 只需要填写TBA文档上的参数
         Core.postAd(Core.mApp,
             JSONObject().put("", si.cpm.toDouble() * 1000)//ad_pre_ecpm
                 .put("", "USD")//currency

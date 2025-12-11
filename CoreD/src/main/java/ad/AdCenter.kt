@@ -16,28 +16,39 @@ import kotlin.random.Random
  */
 
 // 单聚合
-class AdCenter {
-    private val mPAH = PangleAdImpl()// 高价值
-    private val mPangleAdImpl = PangleAdImpl("1") // 低价值
-    private var idH = ""
-    private var idL = ""
+object AdCenter {
+    private var mIdList: List<String> = listOf()
+    private var listAd: ArrayList<PangleAdImpl> = arrayListOf()
 
-    fun setAdId(high: String, lowId: String) {
-        idH = high
-        idL = lowId
+    @JvmStatic
+    fun setAdId(idList: String) {
+        val list = if (idList.contains("-")) {
+            idList.split("-")
+        } else {
+            listOf(idList)
+        }
+        if (mIdList.isEmpty() || list.size == mIdList.size) {
+            mIdList = list
+        }
+        val siz1 = mIdList.size
+        if (listAd.isEmpty()) {
+            for (i in 0 until siz1) {
+                listAd.add(i, PangleAdImpl(if (i==0) "" else "$i"))
+            }
+        }
     }
 
+    @JvmStatic
     fun loadAd() {
-        mPAH.lAd(idH)
-        mPangleAdImpl.lAd(idL)
+        val size = listAd.size
+        for (i in 0 until size) {
+            listAd[i].lAd(mIdList[i])
+        }
     }
-
-    fun isReady(): Boolean {
-        return mPAH.isReadyAd() || mPangleAdImpl.isReadyAd()
-    }
-
 
     private var job: Job? = null
+
+    @JvmStatic
     fun showAd(ac: Activity) {
         AdE.sNumJump(0)
         if (ac is AppCompatActivity) {
@@ -46,30 +57,39 @@ class AdCenter {
             job = ac.lifecycleScope.launch {
                 Core.pE("ad_done")
                 delay(Random.nextLong(AdE.gDTime()))
-                var isS = show(ac)
+                val isS = show(ac)
                 if (isS.not()) {
-                    isS = show(ac)
-                }
-                if (isS.not()) {
-                    delay(500)
-                    ac.finishAndRemoveTask()
+                    delay(1000)
+                    ac.finish()
                 }
             }
         }
     }
 
-    private var flag = 0
     private fun show(ac: Activity): Boolean {
-        return when (flag) {
-            0 -> {
-                flag = 1
-                mPAH.shAd(ac)
-            }
-
-            else -> {
-                flag = 0
-                mPangleAdImpl.shAd(ac)
+        var time = System.currentTimeMillis()
+        var index = -1
+        for (i in 0 until listAd.size) {
+            val ad = listAd[i]
+            if (ad.isReadyAd() && time > ad.loadTime) {
+                index = i
+                time = ad.loadTime
             }
         }
+        if (index == -1) {
+            return false
+        }
+        return listAd[index].shAd(ac)
+    }
+
+    @JvmStatic
+    fun isAdReady(): Boolean {
+        for (i in 0 until listAd.size) {
+            val ad = listAd[i]
+            if (ad.isReadyAd()) {
+                return true
+            }
+        }
+        return false
     }
 }

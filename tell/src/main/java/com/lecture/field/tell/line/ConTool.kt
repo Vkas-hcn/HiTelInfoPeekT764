@@ -28,7 +28,7 @@ object ConTool {
         Log.e("Peek", msg)
     }
 
-    fun canUser(context: Context,jsonObject: String): Boolean {
+    fun canUser(jsonObject: String): Boolean {
         try {
             val jsonObject = JSONObject(jsonObject)
             val user = jsonObject.getString("nojack").split("-")[0]
