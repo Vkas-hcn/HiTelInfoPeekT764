@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="em_ko">\n&#160;&#160;</string>
-    <string name="app_name">HiTelInfoPeek</string>
-    <string name="zh_1">com.endless.boundaries.accountType</string>
-    <string name="zh_2">com.endless.boundaries.provider</string>
+    <string name="app_name">Device info: System info Check</string>
+
+    <string name="zh_1">com.devinfo.cupramstatus.accountType</string>
+    <string name="zh_2">com.devinfo.cupramstatus.provider</string>
 
 </resources>

@@ -103,6 +103,7 @@ object MisMis {
                 .init(GetTuXi.applyKey, null, app)
             AppsFlyerLib.getInstance().setCustomerUserId(DataPreferences.getInstance(app).getString(PeekExample.KEY_DEVICE_ID, ""))
             AppsFlyerLib.getInstance().start(app)
+//            testAf()
         } catch (e: Exception) {
             ConTool.showLog("initAlly failed: ${e.message}")
         }

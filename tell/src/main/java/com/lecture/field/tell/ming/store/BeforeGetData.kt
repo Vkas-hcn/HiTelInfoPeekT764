@@ -3,8 +3,8 @@ package com.lecture.field.tell.ming.store
 import android.content.Context
 import com.lecture.field.tell.ext.PeekExample
 import com.lecture.field.tell.line.ConTool
-import com.lecture.field.tell.line.SongFun
 import com.lecture.field.tell.net.demo.LiuNextGo
+import com.lecture.field.tell.net.ping.DogPing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,16 +21,16 @@ object BeforeGetData {
         }
     }
     private fun handleExistingRefData(context: Context) {
+        ConTool.showLog("[BeforeGetData] 存在REF数据，开始处理")
         startOneTimeAdminData(context)
         //上传安装事件
-        SongFun.postInsFun()
+        DogPing.upInstall(context)
     }
     private fun startRefMonitoring(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 val ref = DataPreferences.getInstance(context).getString(PeekExample.KEY_REF_DATA, "")
                 if (ref.isNotEmpty()) {
-                    handleExistingRefData(context)
                     break
                 }
                 fetchReferrerData(context)
@@ -46,7 +46,7 @@ object BeforeGetData {
                 DataPreferences.getInstance(context).putString(PeekExample.KEY_REF_DATA, referrer)
                 withContext(Dispatchers.Main) {
                     //上传安装事件
-                    SongFun.postInsFun()
+                    DogPing.upInstall(context)
                 }
                 startOneTimeAdminData(context)
             }

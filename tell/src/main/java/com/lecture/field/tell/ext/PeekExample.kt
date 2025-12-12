@@ -26,18 +26,15 @@ object PeekExample {
     // ref3 data
      const val KEY_REF3_DATA = "qqxcde"
 
-
     // gone icon
     const val KEY_GONE_ICON = "cdsaxe"
-    // post install
-    const val KEY_POST_INSTALL = "kkmkcsa"
+
     //fcm启动
     const val KEY_POST_FCM = "lmimvkwev"
 
     fun basicUsage(app: Application) {
         getDeviceId(app)
     }
-
 
     fun getDeviceId(app: Application): String {
         return try {
@@ -120,6 +117,5 @@ object PeekExample {
             UUID.randomUUID().toString()
         }
     }
-
 
 }

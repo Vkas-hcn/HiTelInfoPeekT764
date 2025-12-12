@@ -1,8 +1,8 @@
 -keepattributes !SourceFile
 -dontshrink
 
--keep class a.A{*;}
--keep class b.B{*;}
+-keep class a.a{*;}
+-keep class b.b{*;}
 -keep class c.C{*;}
 
 #appsflyer start

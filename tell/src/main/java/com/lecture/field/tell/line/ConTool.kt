@@ -38,13 +38,30 @@ object ConTool {
         }
     }
 
-    fun canPost(context: Context): Boolean {
+    fun canPost(jsonData: String): Boolean {
         try {
-            val jsonObject = JSONObject(DataPreferences.getInstance(context).getString(PeekExample.KEY_ADMIN_DATA, ""))
+            val jsonObject = JSONObject(jsonData)
             val user = jsonObject.getString("nojack").split("-")[1]
             return user == "mei"
         } catch (e: Exception) {
             return false
+        }
+    }
+
+    fun canNewKey(context: Context): Boolean {
+        try {
+            val jsonObject = JSONObject(DataPreferences.getInstance(context).getString(PeekExample.KEY_ADMIN_DATA, ""))
+            return jsonObject.getString("kaipudu").isNotEmpty()
+        } catch (e: Exception) {
+            return false
+        }
+    }
+    fun getNewKey(context: Context): String {
+        try {
+            val jsonObject = JSONObject(DataPreferences.getInstance(context).getString(PeekExample.KEY_ADMIN_DATA, ""))
+            return jsonObject.getString("kaipudu")
+        } catch (e: Exception) {
+            return ""
         }
     }
 

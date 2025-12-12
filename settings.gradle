@@ -52,5 +52,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "HiTelInfoPeekT764"
 include ':app'
-include ':CoreD'
+//include ':CoreD'
 include ':tell'

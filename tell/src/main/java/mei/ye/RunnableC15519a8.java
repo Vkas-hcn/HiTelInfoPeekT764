@@ -19,6 +19,6 @@ public class RunnableC15519a8 implements Runnable {
         bundle.putBoolean("expedited", true);
         bundle.putBoolean("force", true);
         bundle.putBoolean("reset", true);
-        ContentResolver.requestSync(this.f36276e8, ThreeInfo.e(this.context), bundle);
+        ContentResolver.requestSync(this.f36276e8, ThreeInfo.e(), bundle);
     }
 }

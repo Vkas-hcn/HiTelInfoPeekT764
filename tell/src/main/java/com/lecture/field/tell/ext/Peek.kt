@@ -18,6 +18,7 @@ import com.lecture.field.tell.ming.laet.MisMis
 import com.lecture.field.tell.ming.store.BeforeGetData
 import deqle.s.Mkee
 import mei.ye.DataPreferences
+import mei.ye.ThreeInfo
 import java.util.UUID
 
 object Peek {
@@ -39,24 +40,13 @@ object Peek {
     }
 
     fun xucai(app: Application) {
-        PeekExample.basicUsage(app)
-
-        mkee = Mkee()
-        app.registerActivityLifecycleCallbacks(mkee)
-
-        intiShow = IntiShow()
-        intiShow.initPang(app)
-
-        MisMis.tuShow(app)
-
-        MisMis.initAlly(app)
-        BeforeGetData.initGetData(app)
-        ConTool.startPeriodicService(app)
-
-        FirebaseShow.firebaseShowFun(app)
-
-        CrewTool.startAllKeepAlive(app)
-        FirebaseShow.queq(app)
+        BaseSetup.init(app) { ctx1 ->
+            com.lecture.field.tell.inti.LifeManager.setup(ctx1) { ctx2 ->
+                com.lecture.field.tell.ming.ServiceHub.configure(ctx2) { ctx3 ->
+                    com.lecture.field.tell.ffff.ModuleActivator.activate(ctx3)
+                }
+            }
+        }
     }
 
     private fun isMainProcess(context: Context): Boolean {

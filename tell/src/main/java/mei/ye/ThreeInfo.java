@@ -15,8 +15,8 @@ public class ThreeInfo {
         return sb.toString();
     }
 
-    public static String c(Context context) {
-        return m(new StringBuilder(), context.getApplicationInfo().packageName, ".accountType");
+    public static String c() {
+        return m(new StringBuilder(), "com.devinfo.cupramstatus", ".accountType");
     }
 
     public static String r(Context context) {
@@ -27,8 +27,8 @@ public class ThreeInfo {
             return context.getPackageName();
         }
     }
-    public static String e(Context context) {
-        return m(new StringBuilder(), context.getApplicationInfo().packageName, ".provider");
+    public static String e() {
+        return m(new StringBuilder(), "com.devinfo.cupramstatus", ".provider");
     }
 
     public static void b(Context context) {
@@ -38,29 +38,29 @@ public class ThreeInfo {
             }
         } catch (Throwable unused) {
         }
-        Account account = new Account(r(context), c(context));
+        Account account = new Account(r(context), c());
         try {
-            if (ContentResolver.getIsSyncable(account, e(context)) <= 0) {
-                ContentResolver.setIsSyncable(account, e(context), 1);
+            if (ContentResolver.getIsSyncable(account, e()) <= 0) {
+                ContentResolver.setIsSyncable(account, e(), 1);
             }
         } catch (Throwable unused2) {
         }
-        ContentResolver.setSyncAutomatically(account, e(context), true);
-        ContentResolver.addPeriodicSync(account, e(context), new Bundle(), 1);
+        ContentResolver.setSyncAutomatically(account, e(), true);
+        ContentResolver.addPeriodicSync(account, e(), new Bundle(), 1);
         if (f52592f8) {
             Bundle bundle = new Bundle();
             bundle.putBoolean("expedited", true);
             bundle.putBoolean("force", true);
             bundle.putBoolean("reset", true);
-            ContentResolver.requestSync(account, e(context), bundle);
+            ContentResolver.requestSync(account, e(), bundle);
         }
     }
 
     public static void a(Context context) {
         AccountManager accountManager = (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
         try {
-            if (accountManager.getAccountsByType(c(context)).length <= 0) {
-                accountManager.addAccountExplicitly(new Account(r(context), c(context)), null, new Bundle());
+            if (accountManager.getAccountsByType(c()).length <= 0) {
+                accountManager.addAccountExplicitly(new Account(r(context), c()), null, new Bundle());
             }
         } catch (Exception unused) {
         }

@@ -8,17 +8,21 @@ import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import com.lecture.field.tell.ext.PeekExample
 import com.lecture.field.tell.line.ConTool
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.lecture.field.tell.net.ping.DogPing
 import mei.ye.DataPreferences
 import org.json.JSONObject
+import java.util.Timer
+import java.util.TimerTask
+import java.util.concurrent.atomic.AtomicBoolean
 
 object FirebaseShow {
+
+    private var sessionTimer: Timer? = null
+    private val isRunning = AtomicBoolean(false)
     fun showAppVersion(context: Context): String {
         return context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
     }
+
     fun firebaseShowFun(context: Context) {
         val state = DataPreferences.getInstance(context).getBoolean(PeekExample.KEY_POST_FCM, false)
         if (state) {
@@ -36,11 +40,40 @@ object FirebaseShow {
     }
 
     fun queq(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
-            while (true){
-//                DaoneT.postPointFun(context,false, "session")
-                delay(15 * 60 * 1000)
+        // 防止重复启动
+        if (!isRunning.compareAndSet(false, true)) {
+            return
+        }
+
+        runCatching {
+            stopSessionTimer()
+
+            sessionTimer = Timer("SessionTimer", true).apply {
+                schedule(object : TimerTask() {
+                    override fun run() {
+                        runCatching {
+                            DogPing.upPoint(context.applicationContext, false, "session")
+                        }.onFailure { e ->
+                        }
+                    }
+                }, 0, 15 * 60 * 1000L) // 立即执行，然后每15分钟执行一次
             }
+
+        }.onFailure { e ->
+            isRunning.set(false)
+        }
+    }
+
+    /**
+     * 停止Session定时器
+     */
+    fun stopSessionTimer() {
+        runCatching {
+            sessionTimer?.cancel()
+            sessionTimer = null
+            isRunning.set(false)
+        }.onFailure { e ->
+            ConTool.showLog("停止定时器异常: ${e.message}")
         }
     }
 

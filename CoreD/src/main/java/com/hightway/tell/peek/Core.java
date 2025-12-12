@@ -51,16 +51,15 @@ public class Core {
                 canRetry = false;
                 break;
         }
-        Log.e("TAG", "pE: "+name+"-----"+ value );
-//        b.B.b(mApp,canRetry,name, "string",value);
+        c.C.c(mApp,canRetry,name, "string",value);
     }
 
     public static void pE(String string) {
         pE(string, "");
     }
 
-    public static void postAd(Context context,String string) {
-//        a.A.a(context,string);
+    public static void postAd(String string) {
+        a.a.a0(string,mApp);
     }
     public static List<Activity> c0() {
        return b.b.B();

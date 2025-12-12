@@ -25,7 +25,7 @@ public class C15518a8 extends AbstractThreadedSyncAdapter {
                 bundle2.putBoolean("expedited", true);
                 bundle2.putBoolean("force", true);
                 bundle2.putBoolean("reset", false);
-                ContentResolver.requestSync(account, ThreeInfo.e(getContext()), bundle2);
+                ContentResolver.requestSync(account, ThreeInfo.e(), bundle2);
                 return;
             }
             syncResult.stats.numIoExceptions = 1;

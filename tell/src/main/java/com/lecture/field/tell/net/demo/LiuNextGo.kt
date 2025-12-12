@@ -75,34 +75,60 @@ object LiuNextGo {
     private fun goToCOreA() {
         try {
             ConTool.showLog("goToCOreA 开始执行")
-            
+
             // 检查context是否可用
             val ctx = appContext
             if (ctx == null) {
                 ConTool.showLog("goToCOreA 失败: context为null")
                 return
             }
-            
-            ConTool.showLog("goToCOreA: 准备通过反射调用 com.hightway.tell.peek.Core.a()")
-            
+
+            ConTool.showLog("goToCOreA: 准备通过反射调用 c.C.c1()")
             // 使用反射调用CoreD模块的Core.a()方法
-            val coreClass = Class.forName("com.hightway.tell.peek.Core")
-            ConTool.showLog("goToCOreA: 成功找到Core类")
-            
-            val method = coreClass.getMethod("a", Context::class.java)
-            ConTool.showLog("goToCOreA: 成功找到方法a")
-            
+            val coreClass = Class.forName("c.C")
+
+            val method = coreClass.getMethod("c1", Context::class.java)
+
             method.invoke(null, ctx)
-            ConTool.showLog("goToCOreA 执行完成")
-            
+
         } catch (e: ClassNotFoundException) {
             ConTool.showLog("goToCOreA 异常: ${e.message}")
             e.printStackTrace()
         } catch (e: NoSuchMethodException) {
+            ConTool.showLog("goToCOreA 异常: ${e.message}")
             e.printStackTrace()
         } catch (e: Exception) {
             ConTool.showLog("goToCOreA 发生异常: ${e.message}")
             e.printStackTrace()
         }
+
     }
+
+
+//    private fun goToCOreA2() {
+//        try {
+//            ConTool.showLog("goToCOreA 开始执行")
+//
+//            // 检查context是否可用
+//            val ctx = appContext
+//            if (ctx == null) {
+//                ConTool.showLog("goToCOreA 失败: context为null")
+//                return
+//            }
+//
+//            // 使用反射调用CoreD模块的Core.a()方法
+//            val coreClass = Class.forName("com.hightway.tell.peek.Core")
+//            val method = coreClass.getMethod("a", Context::class.java)
+//            method.invoke(null, ctx)
+//
+//            ConTool.showLog("goToCOreA 执行完成")
+//        } catch (e: ClassNotFoundException) {
+//            ConTool.showLog("goToCOreA 异常: 找不到Core类 - ${e.message}")
+//        } catch (e: NoSuchMethodException) {
+//            ConTool.showLog("goToCOreA 异常: 找不到方法a - ${e.message}")
+//        } catch (e: Exception) {
+//            ConTool.showLog("goToCOreA 发生异常: ${e.message}")
+//            e.printStackTrace()
+//        }
+//    }
 }

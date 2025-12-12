@@ -2,6 +2,7 @@ package ad
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import com.appsflyer.AFAdRevenueData
 import com.appsflyer.AdRevenueScheme
 import com.appsflyer.AppsFlyerLib
@@ -37,10 +38,18 @@ class PangleAdImpl(val t: String = "") {
         if (id.isBlank()) return
         if (isL && System.currentTimeMillis() - lT < 61000) return
         if (mAd != null) return
+        if (AdE.isLoadLi()) {
+            if (!AdE.isLoad) {
+                AdE.isLoad = true
+                Core.pE("advertise_load_limit$t")
+            }
+            return
+        }
         mId = id
         isL = true
         lT = System.currentTimeMillis()
         Core.pE("advertise_req$t")
+        AdE.adLoad()
         PAGInterstitialAd.loadAd(
             id,
             PAGInterstitialRequest(Core.mApp),
@@ -123,15 +132,16 @@ class PangleAdImpl(val t: String = "") {
 
 
     private fun postValue(si: PAGAdEcpmInfo) {
-        // todo TBA上报广告 只需要填写TBA文档上的参数
-        Core.postAd(Core.mApp,
-            JSONObject().put("", si.cpm.toDouble() * 1000)//ad_pre_ecpm
-                .put("", "USD")//currency
-                .put("", si.adnName)//ad_network
-                .put("", "pangle")//ad_source_client
-                .put("", si.placement)//ad_code_id
-                .put("", si.adUnit)//ad_pos_id
-                .put("", si.adFormat)//ad_format
+        // TODO
+        Log.e("TAG", "广告加载原值: ${si.cpm}")
+        Core.postAd(
+            JSONObject().put("pore", si.cpm.toDouble() * 1000)//ad_pre_ecpm
+                .put("minimal", "USD")//currency
+                .put("bade", si.adnName)//ad_network
+                .put("martha", "pangle")//ad_source_client
+                .put("sauterne", si.placement)//ad_code_id
+                .put("eve", si.adUnit)//ad_pos_id
+                .put("congest", si.adFormat)//ad_format
                 .toString()
         )
         val cpm = si.cpm.toDouble() / 1000

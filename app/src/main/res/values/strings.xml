@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">HiTelInfoPeek</string>
+    <string name="app_name">Device info: System info Check</string>
     <string name="setting">Setting</string>
     <string name="share">Share</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="login_out">Login Out</string>
     <string name="login">Login</string>
     <string name="app_email">-</string>
-    <string name="privacy_policy_url">https://www.example.com/privacy-policy</string>
+    <string name="privacy_policy_url">https://sites.google.com/view/device-info-system-info-check/home</string>
     <string name="google_play_package">com.endless.boundaries</string>
     <string name="device">Device</string>
     <string name="system">System</string>

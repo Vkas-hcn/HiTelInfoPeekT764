@@ -11,8 +11,6 @@ class StringDelegate(private val value: String) : ReadOnlyProperty<Any?, String>
 }
 
 object GetTuXi {
-    val upUrl: String by StringDelegate("https://test-list.devinfocupramstatus.com/olive/lame")
-    val adminUrl: String by StringDelegate("https://ertu.devinfocupramstatus.com/apitest/cds/pk/")
     val pangKey: String by StringDelegate("8580262")
     val applyKey: String by StringDelegate("5MiZBZBjzzChyhaowfLpyR")
 }

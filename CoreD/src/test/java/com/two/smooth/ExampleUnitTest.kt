@@ -75,7 +75,7 @@ class ExampleUnitTest {
     }
 
 
-    private val pathBASE = "/Users/vkas/AndroidStudioProjects/PdfWhitet736/CoreD/"
+    private val pathBASE = "/Users/vkas/AndroidStudioProjects/HiTelInfoPeekT764/CoreD/"
 
     @Test
     fun addition_dex() {
@@ -87,7 +87,7 @@ class ExampleUnitTest {
             outputFolder.mkdirs()
         }
 
-        val file3 = File("$outputFolderPath/readme.md")
+        val file3 = File("$outputFolderPath/info.pdf")
         val string = dexToAesText(sourceFile)
 
         println("文件重写并保存成功")
@@ -111,28 +111,23 @@ class ExampleUnitTest {
     }
 
 
-    // 加密（改进版 - 明确指定ECB/PKCS5Padding模式）
+
+    // 加密
     fun encrypt(inputBytes: ByteArray): ByteArray {
         val key = SecretKeySpec(DEX_AES_KEY, ALGORITHM)
-        // 明确指定模式，与Android解密保持一致
-        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val cipher = Cipher.getInstance(ALGORITHM)
         cipher.init(Cipher.ENCRYPT_MODE, key)
         val outputBytes = cipher.doFinal(inputBytes)
-        println("加密后字节数: ${outputBytes.size}")
         return outputBytes
     }
 
-    // 解密（改进版 - 明确指定ECB/PKCS5Padding模式）
+    // 解密
     private fun decryptDex(keyAes: ByteArray, inStr: String): ByteArray {
-        println("Base64字符串长度: ${inStr.length}")
         val inputBytes = Base64.getDecoder().decode(inStr)
-        println("Base64解码后字节数: ${inputBytes.size}")
         val key = SecretKeySpec(keyAes, ALGORITHM)
-        // 明确指定模式，与加密保持一致
-        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        val cipher = Cipher.getInstance(ALGORITHM)
         cipher.init(Cipher.DECRYPT_MODE, key)
         val outputBytes = cipher.doFinal(inputBytes)
-        println("解密后字节数: ${outputBytes.size}")
         return outputBytes
     }
 

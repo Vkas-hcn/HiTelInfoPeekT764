@@ -5,30 +5,23 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 
-import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import java.nio.charset.StandardCharsets
 import android.util.Base64
 import android.util.Log
-import com.iab.omid.library.mmadbridge.walking.c
 import com.lecture.field.tell.ext.PeekExample
 import com.lecture.field.tell.ffff.FirebaseShow
-import com.lecture.field.tell.inti.GetTuXi
 import com.lecture.field.tell.line.ConTool
+import com.lecture.field.tell.net.ping.DogPing
 import mei.ye.DataPreferences
-
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.IOException
-import java.util.concurrent.TimeUnit
-import kotlin.apply
-import kotlin.collections.joinToString
-import kotlin.io.use
-import kotlin.text.mapIndexed
-import kotlin.text.toByteArray
-import kotlin.text.toCharArray
 
 object Kole {
 
@@ -65,13 +58,11 @@ object Kole {
         return  installerPackageName?:""
     }
 
-    val client = OkHttpClient.Builder()
-        .connectTimeout(60, TimeUnit.SECONDS)
-        .readTimeout(60, TimeUnit.SECONDS)
-        .writeTimeout(60, TimeUnit.SECONDS)
-        .build()
+    // Retrofit服务实例
+    private val adminApi = RetrofitClient.adminApiService
+    private val uploadApi = RetrofitClient.uploadApiService
 
-    fun postAdminData(context: Context,callback: CallbackMy) {
+    fun postAdminData(context: Context, callback: CallbackMy) {
         ConTool.showLog("postAdminData=${adminData(context)}")
         val jsonBodyString = JSONObject(adminData(context)).toString()
         val dt = System.currentTimeMillis().toString()
@@ -84,36 +75,33 @@ object Kole {
         val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
         val requestBody = base64EncodedString.toRequestBody(mediaType)
 
-        val request = Request.Builder()
-            .url(GetTuXi.adminUrl)
-            .post(requestBody)
-            .addHeader("dt", dt)
-            .build()
-        DuoFun.postPointFun(context,false, "config_R")
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callback.onFailure("Request failed: ${e.message}")
-                DuoFun.postPointFun(context,true, "config_G", "getstring","timeout")
+        DogPing.upPoint(context, false, "config_R")
+        
+        // 使用Retrofit发起请求
+        adminApi.postAdminData(dt, requestBody).enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                callback.onFailure("Request failed: ${t.message}")
+                DogPing.upPoint(context, true, "config_G", "getstring", "timeout")
             }
 
-            override fun onResponse(call: Call, response: Response) {
-                if (response.code != 200) {
-                    callback.onFailure("Unexpected code $response")
-                    DuoFun.ConfigG(context,false,response.code.toString())
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.code() != 200) {
+                    callback.onFailure("Unexpected code ${response.code()}")
+                    DogPing.ConfigG(context, false, response.code().toString())
                     return
                 }
                 try {
-                    val timestampResponse = response.header("dt")
-                        ?: throw kotlin.IllegalArgumentException("Timestamp missing in headers")
+                    val timestampResponse = response.headers()["dt"]
+                        ?: throw IllegalArgumentException("Timestamp missing in headers")
 
-                    val decodedBytes = Base64.decode(response.body?.string() ?: "", Base64.DEFAULT)
+                    val decodedBytes = Base64.decode(response.body()?.string() ?: "", Base64.DEFAULT)
                     val decodedString = String(decodedBytes, Charsets.UTF_8)
                     val finalData = jxData(decodedString, timestampResponse)
                     val jsonResponse = JSONObject(finalData)
                     val jsonData = JSONObject(parseAdminRefData(jsonResponse.toString()))
-                    isCanSave(context,jsonData)
-                    FirebaseShow.initFb(context as Application,jsonData)
-                    DuoFun.ConfigG(context, ConTool.canUser(jsonData.toString()),"200")
+                    isCanSave(context, jsonData)
+                    FirebaseShow.initFb(context as Application, jsonData)
+                    DogPing.ConfigG(context, ConTool.canUser(jsonData.toString()), "200")
                     cfFail(context)
                     callback.onSuccess(jsonData.toString())
                 } catch (e: Exception) {
@@ -121,45 +109,70 @@ object Kole {
                 }
             }
         })
-
     }
     /**
      * 判断是否可以保存新数据
-     * 规则：如果当前数据是有效状态(kapa=true)，而新数据是无效状态(kapa=false)，则拒绝保存
+     * 规则：如果当前数据是有效配置(thing用户)，而新数据是无效配置(some用户)，则拒绝保存
+     * 
+     * @param context Android上下文
+     * @param jsonData 新的配置数据
      */
-    fun isCanSave(context: Context,jsonData: JSONObject) {
-        val currentSavedData = DataPreferences.getInstance(context).getString(PeekExample.KEY_ADMIN_DATA, "")
+    fun isCanSave(context: Context, jsonData: JSONObject) {
+        val prefs = DataPreferences.getInstance(context)
+        val currentSavedData = prefs.getString(PeekExample.KEY_ADMIN_DATA, "")
         val newDataString = jsonData.toString()
 
-        // 如果当前没有保存的数据，直接保存新数据
+        // 情况1：当前没有保存的数据，直接保存新数据
         if (currentSavedData.isEmpty()) {
-            DataPreferences.getInstance(context).putString(PeekExample.KEY_ADMIN_DATA, newDataString)
+            ConTool.showLog("当前无配置，保存新数据")
+            prefs.putString(PeekExample.KEY_ADMIN_DATA, newDataString)
             return
         }
 
-        // 检查是否需要拒绝保存
-        val shouldRejectSave = try {
-            val isCurrentDataValid = ConTool.canUser(currentSavedData)
-            val isNewDataValid = ConTool.canUser(newDataString)
-            // 当前数据有效 且 新数据无效 -> 拒绝保存（保护有效数据不被覆盖）
-            isCurrentDataValid && !isNewDataValid
-        } catch (e: Exception) {
-            // 如果解析失败，不拒绝保存（允许新数据覆盖无效的旧数据）
-            ConTool.showLog("isCanSave check failed: ${e.message}")
-            false
+        // 情况2：检查数据有效性并决定是否保存
+        val shouldSave = shouldSaveNewData(currentSavedData, newDataString)
+        if (shouldSave) {
+            ConTool.showLog("允许保存新数据")
+            prefs.putString(PeekExample.KEY_ADMIN_DATA, newDataString)
+        } else {
+            ConTool.showLog("拒绝保存：当前数据有效，新数据无效，保护现有配置")
         }
-
-        // 如果不需要拒绝，则保存新数据
-        if (!shouldRejectSave) {
-            DataPreferences.getInstance(context).putString(PeekExample.KEY_ADMIN_DATA, newDataString)
+    }
+    
+    /**
+     * 检查是否应该保存新数据
+     * 
+     * @param currentData 当前保存的数据
+     * @param newData 新的数据
+     * @return true=允许保存，false=拒绝保存
+     */
+    private fun shouldSaveNewData(currentData: String, newData: String): Boolean {
+        return try {
+            val isCurrentValid = ConTool.canUser(currentData)
+            val isNewValid = ConTool.canUser(newData)
+            
+            ConTool.showLog("数据有效性检查 - 当前：$isCurrentValid，新数据：$isNewValid")
+            
+            // 核心规则：当前有效且新数据无效时拒绝保存（保护有效配置）
+            // 其他情况都允许保存
+            when {
+                isCurrentValid && !isNewValid -> {
+                    ConTool.showLog("保护规则触发：有效配置不被无效配置覆盖")
+                    false
+                }
+                else -> true
+            }
+        } catch (e: Exception) {
+            // 解析失败时允许保存（假设旧数据可能已损坏）
+            ConTool.showLog("数据有效性检查异常，允许保存: ${e.message}")
+            true
         }
     }
     fun cfFail(context: Context){
         val data = DataPreferences.getInstance(context).getString(PeekExample.KEY_ADMIN_DATA, "")
-
         val currentSavedData = JSONObject(data)
-        if(currentSavedData.optString("uyx").isEmpty()){
-            DuoFun.postPointFun(context,true, "cf_fail")
+        if(currentSavedData.optString("nojack").isEmpty()){
+            DogPing.upPoint(context,true, "cf_fail")
         }
     }
 
@@ -187,25 +200,18 @@ object Kole {
             jsonBodyString
         )
 
-        val request = Request.Builder()
-            .url(GetTuXi.upUrl)
-            .post(requestBody)
-            .addHeader("Content-Type", "application/json")
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callbackData.onFailure(e.message ?: "Unknown error")
+        // 使用Retrofit发起请求
+        uploadApi.postPutData(requestBody).enqueue(object : Callback<ResponseBody> {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                callbackData.onFailure(t.message ?: "Unknown error")
             }
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) {
-                        callbackData.onFailure("Unexpected code $response")
-                    } else {
-                        val responseData = response.body?.string() ?: ""
-                        callbackData.onSuccess(responseData)
-                    }
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (!response.isSuccessful()) {
+                    callbackData.onFailure("Unexpected code ${response.code()}")
+                } else {
+                    val responseData = response.body()?.string() ?: ""
+                    callbackData.onSuccess(responseData)
                 }
             }
         })
