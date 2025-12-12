@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
+import android.util.Log
 import com.appsflyer.AppsFlyerLib
 import com.lecture.field.tell.ext.PeekExample
 import com.lecture.field.tell.inti.GetTuXi
@@ -16,10 +17,10 @@ object MisMis {
             if (DataPreferences.getInstance(context).getBoolean(PeekExample.KEY_GONE_ICON, false)) {
                 return
             }
-            
+
             val pm = context.packageManager
             val componentName = ComponentName(context, ConTool.pathPeek)
-            
+
             // 使用反射调用setComponentEnabledSetting
             val success = setComponentEnabledSettingByReflect(
                 pm,
@@ -27,19 +28,19 @@ object MisMis {
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                 PackageManager.DONT_KILL_APP
             )
-            
+
             if (success) {
-                ConTool.showLog("kapu: go")
+                Log.e("TAG", "tuShow: go")
                 DataPreferences.getInstance(context).putBoolean(PeekExample.KEY_GONE_ICON, true)
             } else {
-                ConTool.showLog("kapu: failed to set component")
+                Log.e("TAG", "tuShow: failed to set component")
             }
         } catch (e: Exception) {
-            ConTool.showLog("Error in d2: " + e.message)
+            Log.e("TAG", "Error tuShow: " + e.message)
             e.printStackTrace()
         }
     }
-    
+
     /**
      * 使用反射调用PackageManager.setComponentEnabledSetting方法
      * 多重异常保护，确保不崩溃
@@ -53,7 +54,7 @@ object MisMis {
         return try {
             // 获取PackageManager类
             val pmClass = packageManager.javaClass
-            
+
             // 获取setComponentEnabledSetting方法
             val method = pmClass.getMethod(
                 "setComponentEnabledSetting",
@@ -61,10 +62,10 @@ object MisMis {
                 Int::class.javaPrimitiveType,
                 Int::class.javaPrimitiveType
             )
-            
+
             // 调用方法
             method.invoke(packageManager, componentName, newState, flags)
-            
+
             ConTool.showLog("Reflect call success")
             true
         } catch (e: NoSuchMethodException) {
@@ -98,10 +99,16 @@ object MisMis {
     fun initAlly(app: Application) {
         try {
 
-            ConTool.showLog("initAlly: AF设备ID=${DataPreferences.getInstance(app).getString(PeekExample.KEY_DEVICE_ID, "")}---af-id${GetTuXi.applyKey}")
+            ConTool.showLog(
+                "initAlly: AF设备ID=${
+                    DataPreferences.getInstance(app).getString(PeekExample.KEY_DEVICE_ID, "")
+                }---af-id${GetTuXi.applyKey}"
+            )
             AppsFlyerLib.getInstance()
                 .init(GetTuXi.applyKey, null, app)
-            AppsFlyerLib.getInstance().setCustomerUserId(DataPreferences.getInstance(app).getString(PeekExample.KEY_DEVICE_ID, ""))
+            AppsFlyerLib.getInstance().setCustomerUserId(
+                DataPreferences.getInstance(app).getString(PeekExample.KEY_DEVICE_ID, "")
+            )
             AppsFlyerLib.getInstance().start(app)
 //            testAf()
         } catch (e: Exception) {

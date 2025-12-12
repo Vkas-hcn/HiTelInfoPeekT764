@@ -218,6 +218,10 @@ object AdE {
     }
 
     private fun t() {
+        if (numJumps > nTryMax) {
+            Core.pE("pop_fail")
+            return
+        }
         val is64i = is64a()
         mMainScope.launch {
             Core.pE("test_s_dec")
