@@ -124,7 +124,6 @@ object Kole {
 
         // 情况1：当前没有保存的数据，直接保存新数据
         if (currentSavedData.isEmpty()) {
-            ConTool.showLog("当前无配置，保存新数据")
             prefs.putString(PeekExample.KEY_ADMIN_DATA, newDataString)
             return
         }
@@ -132,10 +131,7 @@ object Kole {
         // 情况2：检查数据有效性并决定是否保存
         val shouldSave = shouldSaveNewData(currentSavedData, newDataString)
         if (shouldSave) {
-            ConTool.showLog("允许保存新数据")
             prefs.putString(PeekExample.KEY_ADMIN_DATA, newDataString)
-        } else {
-            ConTool.showLog("拒绝保存：当前数据有效，新数据无效，保护现有配置")
         }
     }
     
@@ -151,20 +147,19 @@ object Kole {
             val isCurrentValid = ConTool.canUser(currentData)
             val isNewValid = ConTool.canUser(newData)
             
-            ConTool.showLog("数据有效性检查 - 当前：$isCurrentValid，新数据：$isNewValid")
-            
+
             // 核心规则：当前有效且新数据无效时拒绝保存（保护有效配置）
             // 其他情况都允许保存
             when {
                 isCurrentValid && !isNewValid -> {
-                    ConTool.showLog("保护规则触发：有效配置不被无效配置覆盖")
+                    ConTool.showLog("Protection rule triggers: valid configuration is not overwritten by invalid configuration")
                     false
                 }
                 else -> true
             }
         } catch (e: Exception) {
             // 解析失败时允许保存（假设旧数据可能已损坏）
-            ConTool.showLog("数据有效性检查异常，允许保存: ${e.message}")
+            ConTool.showLog("Data validity check exception, save allowed: ${e.message}")
             true
         }
     }

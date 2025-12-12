@@ -21,7 +21,6 @@ object BeforeGetData {
         }
     }
     private fun handleExistingRefData(context: Context) {
-        ConTool.showLog("[BeforeGetData] 存在REF数据，开始处理")
         startOneTimeAdminData(context)
         //上传安装事件
         DogPing.upInstall(context)

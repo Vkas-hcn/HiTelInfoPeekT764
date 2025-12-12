@@ -20,7 +20,7 @@ object DogPing {
     fun upInstall(context: Context) {
         // 检查是否已上报成功
         if (InstallEventManager.isInstallReported(context)) {
-            ConTool.showLog("[upInstall] 安装事件已上报，跳过")
+            ConTool.showLog("[upInstall] The installation event has been reported and skipped")
             return
         }
         

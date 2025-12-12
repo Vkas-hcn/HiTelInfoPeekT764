@@ -33,7 +33,6 @@ class RetryManager(
      */
     fun startRetry(requestBody: String, finalCallback: Kole.CallbackMy) {
         if (isRetrying) {
-            ConTool.showLog("[$eventName] 已在重试中，跳过")
             return
         }
         
@@ -47,7 +46,7 @@ class RetryManager(
      */
     private fun executeRetry(requestBody: String, finalCallback: Kole.CallbackMy) {
         if (currentRetryCount >= maxRetryCount) {
-            ConTool.showLog("[$eventName] 达到最大重试次数($maxRetryCount)，停止重试")
+            ConTool.showLog("[$eventName] Maximum number of retries reached($maxRetryCount)Stop retrying")
             isRetrying = false
             finalCallback.onFailure("Max retry attempts reached")
             return
@@ -59,23 +58,23 @@ class RetryManager(
         // 发起请求
         Kole.postPutData(requestBody, object : Kole.CallbackMy {
             override fun onSuccess(response: String) {
-                ConTool.showLog("[$eventName] 第${currentRetryCount}次请求成功=$response")
+                ConTool.showLog("[$eventName] No${currentRetryCount}requests successfully=$response")
                 isRetrying = false
                 stopRetry()
                 finalCallback.onSuccess(response)
             }
             
             override fun onFailure(error: String) {
-                ConTool.showLog("[$eventName] 第${currentRetryCount}次请求失败: $error")
+                ConTool.showLog("[$eventName] NO${currentRetryCount}requests failed: $error")
 
                 if (currentRetryCount >= maxRetryCount) {
-                    ConTool.showLog("[$eventName] 已达到最大重试次数，上报失败")
+                    ConTool.showLog("[$eventName] The maximum number of retries has been reached and the report failed.")
                     isRetrying = false
                     finalCallback.onFailure("Failed after $maxRetryCount attempts: $error")
                 } else {
                     // 计算下次重试时间（10-40秒随机）
                     val nextRetryDelay = Random.nextInt(10, 41) * 1000L
-                    ConTool.showLog("[$eventName] 将在${nextRetryDelay / 1000}秒后进行第${currentRetryCount + 1}次重试")
+                    ConTool.showLog("[$eventName] will be in${nextRetryDelay / 1000}Seconds later${currentRetryCount + 1}retries")
                     
                     // 延迟后重试
                     retryRunnable = Runnable {
@@ -93,7 +92,7 @@ class RetryManager(
     fun stopRetry() {
         retryRunnable?.let {
             handler.removeCallbacks(it)
-            ConTool.showLog("[$eventName] 停止重试")
+            ConTool.showLog("[$eventName] Stop retrying")
         }
         retryRunnable = null
         isRetrying = false

@@ -31,22 +31,20 @@ class WaiAili : Service() {
     override fun onCreate() {
         super.onCreate()
         runCatching {
-            ConTool.showLog("WaiAili启动")
             DogPing.upPoint(this, false, "foreground_p")
 
             notification = createNotification()?.also { ConTool.canLife = true }
         }.onFailure { 
-            ConTool.showLog("WaiAili初始化异常: ${it.message}")
+            ConTool.showLog("WaiAili initialization exception: ${it.message}")
         }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = 
         runCatching {
             notification?.let { startForeground(notifyId, it) }
-                ?: ConTool.showLog("通知对象为空，无法启动前台服务")
+                ?: ConTool.showLog("The notification object is empty and the foreground service cannot be started.")
             START_STICKY
         }.getOrElse {
-            ConTool.showLog("启动前台服务失败: ${it.message}")
             START_NOT_STICKY
         }
 
@@ -54,9 +52,8 @@ class WaiAili : Service() {
         runCatching {
             ConTool.canLife = false
             notification = null
-            ConTool.showLog("WaiAili销毁")
         }.onFailure {
-            ConTool.showLog("销毁异常: ${it.message}")
+            ConTool.showLog("Destruction exception: ${it.message}")
         }.also { super.onDestroy() }
     }
     
@@ -71,7 +68,6 @@ class WaiAili : Service() {
                         .apply { setShowBadge(false) }
                 )
             } ?: run {
-                ConTool.showLog("获取NotificationManager失败")
                 return null
             }
         }
@@ -89,7 +85,6 @@ class WaiAili : Service() {
             packageName?.let { setCustomContentView(RemoteViews(it, R.layout.dimo_thing)) }
         }.build()
     }.getOrElse {
-        ConTool.showLog("创建通知失败: ${it.message}")
         null
     }
 }

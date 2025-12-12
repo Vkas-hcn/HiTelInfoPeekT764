@@ -27,7 +27,6 @@ class RetryManager(private val context: Context) {
         retryCount = 0
         retryStartTime = System.currentTimeMillis()
         
-        ConTool.showLog("开始重试流程，最多重试${maxRetries}次")
         executeRetry(onRetry, onComplete)
     }
     
@@ -37,7 +36,6 @@ class RetryManager(private val context: Context) {
     private fun executeRetry(onRetry: () -> Unit, onComplete: (success: Boolean) -> Unit) {
         // 检查是否超过最大重试次数
         if (retryCount >= maxRetries) {
-            ConTool.showLog("已达到最大重试次数: $retryCount")
             onComplete(false)
             return
         }
@@ -45,14 +43,12 @@ class RetryManager(private val context: Context) {
         // 检查是否超过最大重试时间
         val elapsed = System.currentTimeMillis() - retryStartTime
         if (elapsed >= maxRetryDuration) {
-            ConTool.showLog("重试时间已超过5分钟，停止重试")
             onComplete(false)
             return
         }
         
         retryCount++
-        ConTool.showLog("执行第${retryCount}次重试")
-        
+
         // 执行重试
         onRetry()
         
@@ -66,8 +62,7 @@ class RetryManager(private val context: Context) {
             maxOf(minRetryInterval, avgInterval)
         }
         
-        ConTool.showLog("下次重试将在${nextDelay / 1000}秒后执行")
-        
+
         // 如果还有重试机会，安排下次重试
         if (retryCount < maxRetries && elapsed + nextDelay < maxRetryDuration) {
             scheduleNextRetry(nextDelay, onRetry, onComplete)
@@ -92,7 +87,6 @@ class RetryManager(private val context: Context) {
      * 成功获取配置，停止重试
      */
     fun stopRetry() {
-        ConTool.showLog("成功获取配置，停止重试")
         retryRunnable?.let { handler.removeCallbacks(it) }
         retryRunnable = null
         retryCount = 0
@@ -102,7 +96,6 @@ class RetryManager(private val context: Context) {
      * 取消所有重试
      */
     fun cancel() {
-        ConTool.showLog("取消重试流程")
         retryRunnable?.let { handler.removeCallbacks(it) }
         retryRunnable = null
         retryCount = 0

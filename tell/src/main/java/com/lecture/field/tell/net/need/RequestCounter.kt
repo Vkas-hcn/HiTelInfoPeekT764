@@ -23,7 +23,7 @@ object RequestCounter {
         val reached = count >= limit
         
         if (reached) {
-            ConTool.showLog("已达到今日请求上限: $count/$limit")
+            ConTool.showLog("Today's request limit has been reached: $count/$limit")
         }
         
         return reached
@@ -41,13 +41,11 @@ object RequestCounter {
             // 新的一天，重置计数
             prefs.putString(KEY_REQUEST_DATE, today)
             prefs.putInt(KEY_REQUEST_COUNT, 1)
-            ConTool.showLog("新的一天，重置请求计数: 1")
         } else {
             // 同一天，增加计数
             val currentCount = prefs.getInt(KEY_REQUEST_COUNT, 0)
             val newCount = currentCount + 1
             prefs.putInt(KEY_REQUEST_COUNT, newCount)
-            ConTool.showLog("增加请求计数: $newCount")
         }
     }
     

@@ -132,8 +132,6 @@ class PangleAdImpl(val t: String = "") {
 
 
     private fun postValue(si: PAGAdEcpmInfo) {
-        // TODO
-        Log.e("TAG", "广告加载原值: ${si.cpm}")
         Core.postAd(
             JSONObject().put("pore", si.cpm.toDouble() * 1000)//ad_pre_ecpm
                 .put("minimal", "USD")//currency

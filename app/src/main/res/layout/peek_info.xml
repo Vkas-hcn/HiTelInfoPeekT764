@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="60dp"
-                android:text="HiTel InfoPeek"
+                android:text="@string/app_name"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"

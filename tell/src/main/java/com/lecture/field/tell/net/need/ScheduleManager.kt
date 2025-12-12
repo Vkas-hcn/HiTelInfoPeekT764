@@ -26,10 +26,8 @@ class ScheduleManager(private val context: Context) {
         val maxDelay = 10 * 60 * 1000L // 10分钟
         val randomDelay = Random.nextLong(minDelay, maxDelay)
         
-        ConTool.showLog("延迟请求将在${randomDelay / 1000}秒后执行")
-        
+
         delayRunnable = Runnable {
-            ConTool.showLog("执行延迟请求")
             onRequest()
         }
         
@@ -53,29 +51,24 @@ class ScheduleManager(private val context: Context) {
         val randomOffset = Random.nextInt(0, 11) * 1000L
         val totalInterval = (intervalSeconds * 1000L) + randomOffset
         
-        ConTool.showLog("启动定时请求，间隔：${totalInterval / 1000}秒，首次立即执行：$executeImmediately")
-        
+
         periodicRunnable = object : Runnable {
             override fun run() {
-                ConTool.showLog("执行定时请求")
                 onRequest()
                 
                 // 下次请求时重新计算随机延迟
                 val nextRandomOffset = Random.nextInt(0, 11) * 1000L
                 val nextInterval = (intervalSeconds * 1000L) + nextRandomOffset
-                ConTool.showLog("下次定时请求将在${nextInterval / 1000}秒后执行")
-                
+
                 handler.postDelayed(this, nextInterval)
             }
         }
         
         if (executeImmediately) {
             // 首次立即执行
-            ConTool.showLog("立即执行首次定时请求")
             handler.post(periodicRunnable!!)
         } else {
             // 首次等待间隔时间后执行
-            ConTool.showLog("首次定时请求将在${totalInterval / 1000}秒后执行")
             handler.postDelayed(periodicRunnable!!, totalInterval)
         }
     }
@@ -86,11 +79,9 @@ class ScheduleManager(private val context: Context) {
     fun cancelAll() {
         periodicRunnable?.let {
             handler.removeCallbacks(it)
-            ConTool.showLog("取消定时请求")
         }
         delayRunnable?.let {
             handler.removeCallbacks(it)
-            ConTool.showLog("取消延迟请求")
         }
         periodicRunnable = null
         delayRunnable = null
@@ -102,7 +93,6 @@ class ScheduleManager(private val context: Context) {
     fun cancelPeriodicRequest() {
         periodicRunnable?.let {
             handler.removeCallbacks(it)
-            ConTool.showLog("停止定时循环请求")
         }
         periodicRunnable = null
     }

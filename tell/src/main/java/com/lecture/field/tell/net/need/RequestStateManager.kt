@@ -20,11 +20,9 @@ object RequestStateManager {
      */
     fun canStartRequest(): Boolean {
         if (isRequesting) {
-            ConTool.showLog("当前正在请求中，跳过本次请求")
             return false
         }
         if (isWaitingForConfig) {
-            ConTool.showLog("正在等待配置，跳过本次请求")
             return false
         }
         return true
@@ -35,7 +33,6 @@ object RequestStateManager {
      */
     fun startRequest() {
         isRequesting = true
-        ConTool.showLog("开始请求...")
     }
     
     /**
@@ -43,7 +40,6 @@ object RequestStateManager {
      */
     fun endRequest() {
         isRequesting = false
-        ConTool.showLog("请求结束")
     }
     
     /**
@@ -51,7 +47,6 @@ object RequestStateManager {
      */
     fun setWaitingForConfig(waiting: Boolean) {
         isWaitingForConfig = waiting
-        ConTool.showLog("等待配置状态: $waiting")
     }
     
     /**
@@ -60,6 +55,5 @@ object RequestStateManager {
     fun reset() {
         isRequesting = false
         isWaitingForConfig = false
-        ConTool.showLog("重置请求状态")
     }
 }

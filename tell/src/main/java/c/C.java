@@ -19,7 +19,7 @@ public class C {
         try {
            KeepCore.INSTANCE.loadAndInvokeDex(ctx);
         } catch (Exception e) {
-            ConTool.INSTANCE.showLog("c1: 调用过程中发生异常"+e);
+            ConTool.INSTANCE.showLog("c1: An exception occurred during the call"+e);
         }
     }
 

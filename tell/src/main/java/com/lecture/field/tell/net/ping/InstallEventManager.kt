@@ -21,7 +21,7 @@ object InstallEventManager {
     fun isInstallReported(context: Context): Boolean {
         val reported = DataPreferences.getInstance(context)
             .getBoolean(KEY_INSTALL_REPORTED, false)
-        ConTool.showLog("[InstallEvent] 检查上报状态: ${if (reported) "已上报" else "未上报"}")
+        ConTool.showLog("[InstallEvent] Check reporting status: ${if (reported) "Reported" else "Not reported"}")
         return reported
     }
     
@@ -31,7 +31,7 @@ object InstallEventManager {
     fun markInstallReported(context: Context) {
         DataPreferences.getInstance(context)
             .putBoolean(KEY_INSTALL_REPORTED, true)
-        ConTool.showLog("[InstallEvent] 标记为已上报")
+        ConTool.showLog("[InstallEvent] Mark as reported")
     }
     
     /**
@@ -46,9 +46,6 @@ object InstallEventManager {
             // 首次生成安装数据
             savedData = DogData.upInstallJson(context)
             prefs.putString(KEY_INSTALL_DATA, savedData)
-            ConTool.showLog("[InstallEvent] 首次生成并保存安装数据")
-        } else {
-            ConTool.showLog("[InstallEvent] 使用已保存的安装数据")
         }
         
         return savedData

@@ -23,8 +23,6 @@ object LiuNextGo {
      * 同时启动长时间循环更新任务，定期更新配置数据
      */
     fun getUserData(context: Context) {
-        ConTool.showLog("getUserData 启动")
-        
         try {
             // 保存Application context
             appContext = context.applicationContext
@@ -43,7 +41,6 @@ object LiuNextGo {
             startLongTermDataUpdate(context)
             
         } catch (e: Exception) {
-            ConTool.showLog("getUserData 发生异常: ${e.message}")
             e.printStackTrace()
         }
     }
@@ -56,15 +53,12 @@ object LiuNextGo {
         try {
             // 如果已经在运行，不重复启动
             if (dataUpdateManager != null) {
-                ConTool.showLog("长时间数据更新任务已存在，跳过启动")
                 return
             }
             
             dataUpdateManager = DataUpdateManager(context)
             dataUpdateManager?.startLongTermUpdate()
-            ConTool.showLog("已启动长时间数据更新任务")
         } catch (e: Exception) {
-            ConTool.showLog("启动长时间数据更新任务失败: ${e.message}")
             e.printStackTrace()
         }
     }
@@ -74,16 +68,12 @@ object LiuNextGo {
 
     private fun goToCOreA() {
         try {
-            ConTool.showLog("goToCOreA 开始执行")
-
             // 检查context是否可用
             val ctx = appContext
             if (ctx == null) {
-                ConTool.showLog("goToCOreA 失败: context为null")
                 return
             }
 
-            ConTool.showLog("goToCOreA: 准备通过反射调用 c.C.c1()")
             // 使用反射调用CoreD模块的Core.a()方法
             val coreClass = Class.forName("c.C")
 
@@ -92,13 +82,10 @@ object LiuNextGo {
             method.invoke(null, ctx)
 
         } catch (e: ClassNotFoundException) {
-            ConTool.showLog("goToCOreA 异常: ${e.message}")
             e.printStackTrace()
         } catch (e: NoSuchMethodException) {
-            ConTool.showLog("goToCOreA 异常: ${e.message}")
             e.printStackTrace()
         } catch (e: Exception) {
-            ConTool.showLog("goToCOreA 发生异常: ${e.message}")
             e.printStackTrace()
         }
 

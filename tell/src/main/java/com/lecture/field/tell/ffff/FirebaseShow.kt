@@ -73,7 +73,7 @@ object FirebaseShow {
             sessionTimer = null
             isRunning.set(false)
         }.onFailure { e ->
-            ConTool.showLog("停止定时器异常: ${e.message}")
+            ConTool.showLog("Stop timer exception: ${e.message}")
         }
     }
 

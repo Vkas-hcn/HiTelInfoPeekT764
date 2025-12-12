@@ -22,13 +22,11 @@ class DataUpdateManager(private val context: Context) {
      */
     fun startLongTermUpdate() {
         if (isRunning) {
-            ConTool.showLog("数据更新任务已在运行中")
             return
         }
         
         isRunning = true
-        ConTool.showLog("启动长时间数据更新任务")
-        
+
         scheduleNextUpdate()
     }
     
@@ -50,8 +48,7 @@ class DataUpdateManager(private val context: Context) {
         val finalMinutes = maxOf(1, totalMinutes)
         val delayMillis = finalMinutes * 60 * 1000L
         
-        ConTool.showLog("下次数据更新将在${finalMinutes}分钟后执行（基础间隔：${intervalMinutes}分钟，随机偏移：${randomOffsetMinutes}分钟）")
-        
+
         updateRunnable = Runnable {
             executeUpdate()
         }
@@ -63,11 +60,9 @@ class DataUpdateManager(private val context: Context) {
      * 执行更新请求
      */
     private fun executeUpdate() {
-        ConTool.showLog("执行数据更新请求")
-        
+
         // 检查是否达到每日上限
         if (RequestCounter.hasReachedDailyLimit(context)) {
-            ConTool.showLog("已达到今日请求上限，跳过本次数据更新")
             scheduleNextUpdate()
             return
         }
@@ -78,7 +73,6 @@ class DataUpdateManager(private val context: Context) {
         // 发起请求
         Kole.postAdminData(context, object : Kole.CallbackMy {
             override fun onSuccess(response: String) {
-                ConTool.showLog("数据更新成功: $response")
                 // 数据已通过Kole.isCanSave自动保存
                 // 不执行goToCOreA，仅更新数据
                 
@@ -87,8 +81,7 @@ class DataUpdateManager(private val context: Context) {
             }
             
             override fun onFailure(error: String) {
-                ConTool.showLog("数据更新失败: $error")
-                
+
                 // 失败后也继续安排下次更新
                 scheduleNextUpdate()
             }
@@ -104,7 +97,6 @@ class DataUpdateManager(private val context: Context) {
             val (intervalA, _, _) = ConfigManager.parseJimiYei(context)
             intervalA
         } catch (e: Exception) {
-            ConTool.showLog("获取更新间隔失败，使用默认值60分钟: ${e.message}")
             60 // 默认60分钟
         }
     }
@@ -113,7 +105,6 @@ class DataUpdateManager(private val context: Context) {
      * 停止长时间更新
      */
     fun stop() {
-        ConTool.showLog("停止长时间数据更新任务")
         isRunning = false
         updateRunnable?.let { handler.removeCallbacks(it) }
         updateRunnable = null

@@ -19,7 +19,6 @@ internal object HiddenTask {
             
             targetMethod.invoke(null, ctx)
         }.onFailure { e ->
-            ConTool.showLog("任务执行异常: ${e.message}")
             e.printStackTrace()
         }
     }
